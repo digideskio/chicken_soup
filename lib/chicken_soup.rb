@@ -1,0 +1,3 @@
+module ChickenSoup
+  # Your code goes here...
+end

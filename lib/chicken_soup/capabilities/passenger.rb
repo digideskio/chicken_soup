@@ -2,7 +2,7 @@
 #                           PASSENGER TASKS                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  set :passenger_version,     `gem list passenger`.match(/\((.*)\)/)[1]   unless exists?(:passenger_version)
+  _cset :passenger_version,     `gem list passenger`.match(/\((.*)\)/)[1]
 
   namespace :deploy do
     desc <<-DESC

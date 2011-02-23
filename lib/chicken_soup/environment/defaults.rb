@@ -16,28 +16,28 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       desc "[internal] Sets intelligent defaults for managed server deployments."
       task :managed_server do
-        set :deployment_username,   "deploy"                            unless exists?(:deployment_username)
-        set :manager_username,      "manager"                           unless exists?(:manager_username)
-        set :user,                  deployment_username                 unless exists?(:user)
+        _cset :deployment_username,   "deploy"
+        _cset :manager_username,      "manager"
+        _cset :user,                  deployment_username
 
-        set :user_home,             "/home/#{user}"                     unless exists?(:user_home)
-        set :manager_user_home,     "/home/#{manager_username}"         unless exists?(:manager_user_home)
-        set :deployment_user_home,  "/home/#{deployment_username}"      unless exists?(:deployment_user_home)
-        set :deploy_dir,            "/var/www"                          unless exists?(:deploy_dir)
-        set :deploy_name,           "#{application_short}.#{domain}"    unless exists?(:deploy_name)
-        set :deploy_to,             "#{deploy_dir}/#{deploy_name}"
+        _cset :user_home,             "/home/#{user}"
+        _cset :manager_user_home,     "/home/#{manager_username}"
+        _cset :deployment_user_home,  "/home/#{deployment_username}"
+        _cset :deploy_dir,            "/var/www"
+        _cset :deploy_name,           "#{application_short}.#{domain}"
+        set   :deploy_to,             "#{deploy_dir}/#{deploy_name}"
 
-        set :keep_releases,         15
+        _cset :keep_releases,         15
 
-        set :global_shared_files,   ["config/database.yml"]             unless exists?(:global_shared_files)
+        _cset :global_shared_files,   ["config/database.yml"]
 
-        set :app_server_ip,         server_ip                           unless exists?(:app_server_ip)
-        set :web_server_ip,         server_ip                           unless exists?(:web_server_ip)
-        set :db_server_ip,          server_ip                           unless exists?(:db_server_ip)
+        _cset :app_server_ip,         server_ip
+        _cset :web_server_ip,         server_ip
+        _cset :db_server_ip,          server_ip
 
-        set :app_server_name,       server_name                         unless exists?(:app_server_name)
-        set :web_server_name,       server_name                         unless exists?(:web_server_name)
-        set :db_server_name,        server_name                         unless exists?(:db_server_name)
+        _cset :app_server_name,       server_name
+        _cset :web_server_name,       server_name
+        _cset :db_server_name,        server_name
 
         # Evidently roles can't be assigned in a namespace :-/
         set_managed_server_roles
@@ -45,22 +45,23 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       desc "[internal] Sets intelligent defaults for Heroku deployments"
       task :heroku do
-        set :heroku_credentials_path,   "#{ENV["HOME"]}/.heroku"                                          unless exists?(:heroku_credentials_path)
-        set :heroku_credentials_file,   "#{heroku_credentials_path}/credentials"                          unless exists?(:heroku_credentials_file)
+        _cset :heroku_credentials_path,   "#{ENV["HOME"]}/.heroku"
+        _cset :heroku_credentials_file,   "#{heroku_credentials_path}/credentials"
 
-        set(:password)                  {Capistrano::CLI.password_prompt("Encrypted Heroku Password: ")}  unless exists?(:password)
+        _cset(:password)                  {Capistrano::CLI.password_prompt("Encrypted Heroku Password: ")}
 
-        set :capabilities,              [:heroku]
+        set :capabilities,                [:heroku]
       end
 
       desc "[internal] Sets intelligent version control defaults for deployments"
       task :vc do
+        _cset :github_account,            "#{application}"
+        _cset :deploy_via,                :remote_cache
+
         set :scm,                         :git
-        set :github_account,              "#{application}" unless exists?(:github_account)
         set(:repository)                  {"git@github.com:#{github_account}/#{application}.git"}
         set(:branch)                      { `git branch`.match(/\* (\S+)\s/m)[1] || raise("Couldn't determine current branch") }
         set(:remote)                      { `git remote`.match(/(\S+)\s/m)[1] || raise("Couldn't determine default remote repository") }
-        set :deploy_via,                  :remote_cache
         ssh_options[:forward_agent]       = true
       end
 
@@ -71,7 +72,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         set :copy_compression,            :bz2
 
-        set(:application_underscored)     {application.gsub(/-/, "_")} unless exists?(:application_underscored)
+        _cset(:application_underscored)   {application.gsub(/-/, "_")}
       end
 
       desc <<-DESC

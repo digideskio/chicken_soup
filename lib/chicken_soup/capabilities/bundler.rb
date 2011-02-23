@@ -2,7 +2,7 @@
 #                           BUNDLER TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  set :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]     unless exists?(:gem_packager_version)
+  _cset :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]
   set :rake,                  'bundle exec rake'
 
   before 'gems:install',      'bundler:install'

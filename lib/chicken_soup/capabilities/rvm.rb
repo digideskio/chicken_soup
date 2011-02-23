@@ -2,10 +2,10 @@
 #                             RVM TASKS                              #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  set :ruby_version,          ENV["rvm_ruby_string"]                      unless exists?(:ruby_version)
-  set :ruby_gemset,           ENV["GEM_HOME"].split('@')[1]               unless exists?(:ruby_gemset)
+  _cset :ruby_version,        ENV["rvm_ruby_string"]
+  _cset :ruby_gemset,         ENV["GEM_HOME"].split('@')[1]
 
-  set(:rvm_ruby_string)       {ruby_gemset ? "#{ruby_version}@#{ruby_gemset}" : ruby_version}          unless exists?(:rvm_ruby_string)
+  _cset(:rvm_ruby_string)     {ruby_gemset ? "#{ruby_version}@#{ruby_gemset}" : ruby_version}
 end
 
 def run_with_rvm(ruby_env_string, command)

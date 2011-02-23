@@ -2,8 +2,8 @@
 #                          COMMON DB TASKS                           #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  set(:db_root_password)      {Capistrano::CLI.password_prompt("Root Password For DB: ")} unless exists?(:db_root_password)
-  set(:db_app_password)       {Capistrano::CLI.password_prompt("App Password For DB: ")}  unless exists?(:db_app_password)
+  _cset(:db_root_password)    {Capistrano::CLI.password_prompt("Root Password For DB: ")}
+  _cset(:db_app_password)     {Capistrano::CLI.password_prompt("App Password For DB: ")}
 
   run_task "db:create",       :as => "manager"
   run_task "db:drop",         :as => "manager"

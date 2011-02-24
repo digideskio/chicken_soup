@@ -59,7 +59,6 @@ Capistrano::Configuration.instance(:must_exist).load do
         deploy.setup
         db.create
         website.install
-        bundler.install
         deploy.cold
         deploy.check
       end

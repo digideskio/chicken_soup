@@ -2,50 +2,12 @@
 #                         ENVIRONMENT CHECKS                         #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  on      :start,                                 'environment:check', :except => ['staging', 'production']
+
+  before  'environment:check',                    'environment:check:common'
+
   namespace :environment do
     namespace :check do
-      desc <<-DESC
-        [internal] Checks to see if all necessary managed server environment variables have been set up.
-      DESC
-      task :managed_server do
-        required_variables = [
-          :ruby_version,
-          :ruby_gemset,
-          :rvm_ruby_string,
-          :passenger_version,
-          :gem_packager_version,
-          :user,
-          :deployment_username,
-          :manager_username,
-          :user_home,
-          :manager_user_home,
-          :deploy_dir,
-          :deploy_name,
-          :deploy_to,
-          :app_server_ip,
-          :web_server_ip,
-          :db_server_ip,
-          :web_server_name,
-          :app_server_name,
-          :db_server_name,
-          :capabilities
-        ]
-
-        verify_variables(required_variables)
-      end
-
-      desc <<-DESC
-        [internal] Checks to see if all necessary Heroku environment variables have been set up.
-      DESC
-      task :heroku do
-        required_variables = [
-          :deploy_name,
-          :user
-        ]
-
-        verify_variables(required_variables)
-      end
-
       desc "[internal] Checks for environment variables shared among all deployment types."
       task :common do
         abort "You need to specify staging or production when you deploy. ie 'cap staging db:backup'" unless exists?(:rails_env)
@@ -59,9 +21,18 @@ Capistrano::Configuration.instance(:must_exist).load do
         verify_variables(required_variables)
       end
 
+      desc "[internal] Runs checks for all of the capabilities listed."
+      task :capabilities do
+        if exists?(:capabilities)
+          fetch(:capabilities).each do |capability|
+            environment.check.send(capability.to_s) if environment.check.respond_to?(capability.to_sym)
+          end
+        end
+      end
+
       desc "[internal] Checks to see if all the necessary environment variables have been set up for a proper deployment."
       task :default do
-        environment.check.send(deployment_type.to_s)
+        environment.check.capabilities
       end
     end
   end

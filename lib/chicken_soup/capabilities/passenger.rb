@@ -2,8 +2,6 @@
 #                           PASSENGER TASKS                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  _cset :passenger_version,     `gem list passenger`.match(/\((.*)\)/)[1]
-
   namespace :deploy do
     desc <<-DESC
       There is no way to start the application via Passenger.

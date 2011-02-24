@@ -28,3 +28,37 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
   end
 end
+
+######################################################################
+#                     BUNDLER ENVIRONMENT CHECKS                     #
+######################################################################
+Capistrano::Configuration.instance(:must_exist).load do
+  namespace :environment do
+    namespace :check do
+      desc <<-DESC
+        [internal] Checks to see if all necessary Bundler environment variables have been set up.
+      DESC
+      task :bundler do
+        required_variables = [
+          :gem_packager_version
+        ]
+
+        verify_variables(required_variables)
+      end
+    end
+  end
+end
+
+######################################################################
+#                         DEFAULT BUNDLER SETUP                      #
+######################################################################
+Capistrano::Configuration.instance(:must_exist).load do
+  namespace :environment do
+    namespace :defaults do
+      desc "[internal] Sets intelligent defaults for Bundler deployments."
+      task :bundler do
+        _cset :bundler_version,       `gem list bundler`.match(/\((.*)\)/)[1]
+      end
+    end
+  end
+end

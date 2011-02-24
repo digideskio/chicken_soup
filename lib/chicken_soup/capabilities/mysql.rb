@@ -1,10 +1,9 @@
 ######################################################################
 #                            MYSQL TASKS                             #
 ######################################################################
-
-require 'chicken_soup/capabilities/db'
-
 Capistrano::Configuration.instance(:must_exist).load do
+  require 'chicken_soup/capabilities/shared/db'
+
   namespace :db do
     desc <<-DESC
       Creates the MySQL database and user for the application.

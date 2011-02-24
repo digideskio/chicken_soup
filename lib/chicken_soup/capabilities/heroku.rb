@@ -244,3 +244,43 @@ Capistrano::Configuration.instance(:must_exist).load do
     `heroku invoke #{ENV['COMMAND']}`
   end
 end
+
+######################################################################
+#                     HEROKU ENVIRONMENT CHECKS                      #
+######################################################################
+Capistrano::Configuration.instance(:must_exist).load do
+  namespace :environment do
+    namespace :check do
+      desc <<-DESC
+        [internal] Checks to see if all necessary Heroku environment variables have been set up.
+      DESC
+      task :heroku do
+        required_variables = [
+          :deploy_name,
+          :user,
+          :heroku_credentials_path,
+          :heroku_credentials_file
+        ]
+
+        verify_variables(required_variables)
+      end
+    end
+  end
+end
+
+######################################################################
+#                  DEFAULT HEROKU ENVIRONMENT SETUP                  #
+######################################################################
+Capistrano::Configuration.instance(:must_exist).load do
+  namespace :environment do
+    namespace :defaults do
+      desc "[internal] Sets intelligent defaults for Heroku deployments"
+      task :heroku do
+        _cset :heroku_credentials_path,   "#{ENV["HOME"]}/.heroku"
+        _cset :heroku_credentials_file,   "#{heroku_credentials_path}/credentials"
+
+        _cset(:password)                  {Capistrano::CLI.password_prompt("Encrypted Heroku Password: ")}
+      end
+    end
+  end
+end

@@ -16,7 +16,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         For example, if you had `config/database.yml` as one of your global_shared_files and
         you were deploying to the `staging` environment, this task will look for:
 
-            #{Rails.root}/config/database.yml.staging
+            \#{Rails.root}/config/database.yml.staging
 
         If it finds it, it will upload the file to the shared directory on the server.
 

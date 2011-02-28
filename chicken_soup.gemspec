@@ -28,10 +28,7 @@ Gem::Specification.new do |s|
   s.require_paths         = ["lib"]
   #= Manifest =#
 
-  s.add_dependency('capistrano',            '~> 3.0.3')
+  s.add_dependency('capistrano',            '~> 2.5.19')
 
   s.add_development_dependency('bundler',   '~> 1.0.10')
-  s.add_development_dependency('rspec',     '~> 2.4')
-  s.add_development_dependency('rake',      '~> 0.8.7')
-  s.add_development_dependency('simplecov', '~> 0.3.9')
 end

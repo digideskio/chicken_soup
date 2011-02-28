@@ -2,7 +2,7 @@
 #                              GIT TASKS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  # before  'deploy:cleanup',           'deploy:tag'
+  before  'deploy:cleanup',           'deploy:tag'
 
   namespace :deploy do
     desc <<-DESC

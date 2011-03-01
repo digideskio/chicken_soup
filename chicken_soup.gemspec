@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   #= Manifest =#
 
   s.add_dependency('capistrano',            '~> 2.5.19')
+  s.add_dependency('mail',                  '~> 2.2.15')
 
   s.add_development_dependency('bundler',   '~> 1.0.10')
 end

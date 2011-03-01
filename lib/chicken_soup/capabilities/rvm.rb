@@ -6,10 +6,10 @@ def run_with_rvm(ruby_env_string, command)
 end
 
 ######################################################################
-#                       RVM ENVIRONMENT CHECKS                       #
+#                             RVM CHECKS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :check do
       desc <<-DESC
         [internal] Checks to see if all necessary RVM variables have been set up.
@@ -28,10 +28,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#                    DEFAULT RVM ENVIRONMENT SETUP                   #
+#                           RVM DEFAULTS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :defaults do
       _cset :ruby_version,        ENV["rvm_ruby_string"]
       _cset :ruby_gemset,         ENV["GEM_HOME"].split('@')[1]

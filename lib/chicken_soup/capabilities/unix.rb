@@ -1,5 +1,5 @@
 ######################################################################
-#                         COMMON *NIX TASKS                          #
+#                             UNIX TASKS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   before "deploy:config:symlink",                 "deploy:config:create"
@@ -57,8 +57,6 @@ Capistrano::Configuration.instance(:must_exist).load do
           [internal] Switches Capistrano to use the root user for all subsequent SSH actions.
 
           It will prompt for the root user's password the first time it's needed.
-          (If the Kompanee Bash environment has been installed, you will no longer
-          be able to log in as root.)
         DESC
         task :use do
           set_user_to("root")
@@ -67,7 +65,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       namespace :manager do
         desc <<-DESC
-          Switches Capistrano to use the manager user for all subsequent SSH actions.
+          [internal] Switches Capistrano to use the manager user for all subsequent SSH actions.
 
           It will prompt for the manager user's password the first time it's needed.
           (If public key authentication is already installed, you will not be prompted.)
@@ -79,7 +77,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       namespace :deploy do
         desc <<-DESC
-          Switches Capistrano to use the deployment user for all subsequent SSH actions.
+          [internal] Switches Capistrano to use the deployment user for all subsequent SSH actions.
 
           It will prompt for the deployment user's password the first time it's needed.
           (If public key authentication is already installed, you will not be prompted.)
@@ -93,10 +91,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#                       UNIX ENVIRONMENT CHECKS                      #
+#                             UNIX CHECKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :check do
       desc <<-DESC
         [internal] Checks to see if all necessary unix environment variables have been set up.
@@ -127,10 +125,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#               DEFAULT UNIX SERVER ENVIRONMENT SETUP                #
+#                         UNIX SERVER DEFAULTS                       #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :defaults do
       desc "[internal] Sets intelligent defaults for unix server deployments."
       task :unix do

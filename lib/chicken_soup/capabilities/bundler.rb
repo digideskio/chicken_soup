@@ -2,9 +2,6 @@
 #                           BUNDLER TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  _cset :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]
-  set :rake,                  'bundle exec rake'
-
   before 'gems:install',      'bundler:install'
 
   namespace :gems do
@@ -24,19 +21,25 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :bundler do
     desc "Install Bundler"
     task :install do
-      run_with_rvm "#{ruby_version}@global", "gem install bundler --version #{gem_packager_version} --no-ri --no-rdoc && gem cleanup bundler"
+      bundler_install_command = "gem install bundler --version #{gem_packager_version} --no-ri --no-rdoc && gem cleanup bundler"
+
+      if capabilities.include? :rvm
+        run_with_rvm "#{ruby_version}@global", bundler_install_command
+      else
+        run bundler_install_command
+      end
     end
   end
 end
 
 ######################################################################
-#                     BUNDLER ENVIRONMENT CHECKS                     #
+#                           BUNDLER CHECKS                           #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :check do
       desc <<-DESC
-        [internal] Checks to see if all necessary Bundler environment variables have been set up.
+        [internal] Checks to see if all necessary Bundler capabilities variables have been set up.
       DESC
       task :bundler do
         required_variables = [
@@ -50,14 +53,15 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#                         DEFAULT BUNDLER SETUP                      #
+#                          BUNDLER DEFAULTS                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :defaults do
       desc "[internal] Sets intelligent defaults for Bundler deployments."
       task :bundler do
-        _cset :bundler_version,       `gem list bundler`.match(/\((.*)\)/)[1]
+        _cset :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]
+        set   :rake,                  'bundle exec rake'
       end
     end
   end

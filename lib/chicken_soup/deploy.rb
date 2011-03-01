@@ -1,3 +1,6 @@
+######################################################################
+#                           DEPLOYMENT TASKS                         #
+######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   before "deploy",          "deploy:web:disable"
   after  "deploy",          "deploy:web:enable"

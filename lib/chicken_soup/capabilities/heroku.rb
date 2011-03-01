@@ -246,10 +246,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#                     HEROKU ENVIRONMENT CHECKS                      #
+#                           HEROKU CHECKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :check do
       desc <<-DESC
         [internal] Checks to see if all necessary Heroku environment variables have been set up.
@@ -269,10 +269,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 end
 
 ######################################################################
-#                  DEFAULT HEROKU ENVIRONMENT SETUP                  #
+#                           HEROKU DEFAULTS                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
+  namespace :capabilities do
     namespace :defaults do
       desc "[internal] Sets intelligent defaults for Heroku deployments"
       task :heroku do

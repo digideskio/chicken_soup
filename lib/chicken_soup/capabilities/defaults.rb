@@ -2,8 +2,8 @@
 #                     DEFAULT CAPABILITIES SETUP                     #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after   'environment:defaults',       'capabilities:defaults:load'
-  before  'capabilities:defaults:load', 'load_capabilities'
+  after   'environment:defaults',       'capabilities:defaults'
+  before  'capabilities:defaults',      'load_capabilities'
 
   namespace :capabilities do
     namespace :defaults do
@@ -12,7 +12,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         Most of these values can be overridden in each application's deploy.rb file.
       DESC
-      task :load do
+      task :default do
         defaults.send(deployment_type.to_s)
 
         if exists?(:capabilities)

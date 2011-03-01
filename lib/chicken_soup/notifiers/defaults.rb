@@ -2,8 +2,8 @@
 #                        DEFAULT NOTIFIERS SETUP                     #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after   'environment:defaults',       'notifiers:defaults:load'
-  before  'notifiers:defaults:load',    'load_notifiers'
+  after   'environment:defaults',       'notifiers:defaults'
+  before  'notifiers:defaults',         'load_notifiers'
 
   namespace :notifiers do
     namespace :defaults do
@@ -12,7 +12,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         Most of these values can be overridden in each application's deploy.rb file.
       DESC
-      task :load do
+      task :default do
         if exists?(:notifiers)
           fetch(:notifiers).each do |notifier|
             notifiers.defaults.send(notifier.to_s) if notifiers.defaults.respond_to?(notifier.to_sym)

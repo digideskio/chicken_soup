@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   task :load_capabilities do
     require "chicken_soup/capabilities/#{deployment_type}"
 
-    capabilities.each do |capability|
+    fetch(:capabilities).each do |capability|
       require "chicken_soup/capabilities/#{capability}"
     end
   end

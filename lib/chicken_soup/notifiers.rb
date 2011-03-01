@@ -7,7 +7,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
   task :load_notifiers do
-    notifiers.each do |notifier|
+    fetch(:notifiers).each do |notifier|
       require "chicken_soup/notifiers/#{notifier}"
     end
   end

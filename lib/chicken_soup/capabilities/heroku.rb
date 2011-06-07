@@ -33,14 +33,14 @@ Capistrano::Configuration.instance(:must_exist).load do
         Installs a new domain for the application on the Heroku server.
       DESC
       task :install do
-        `heroku domains:add #{deploy_name}`
+        `heroku domains:add #{deploy_site_name}`
       end
 
       desc <<-DESC
         Removes the domain for the application from the Heroku server.
       DESC
       task :remove do
-        `heroku domains:remove #{deploy_name}`
+        `heroku domains:remove #{deploy_site_name}`
       end
 
       namespace :addon do
@@ -256,7 +256,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       DESC
       task :heroku do
         required_variables = [
-          :deploy_name,
+          :deploy_site_name,
           :user,
           :heroku_credentials_path,
           :heroku_credentials_file

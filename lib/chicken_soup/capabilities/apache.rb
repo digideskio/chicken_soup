@@ -146,7 +146,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :enable do
         abort "Sorry, auto-enabling sites is not supported on your version of Apache." unless exists?(:apache_enable_script)
 
-        run "#{sudo} #{apache_enable_script} #{deploy_name}"
+        run "#{sudo} #{apache_enable_script} #{deploy_site_name}"
         apache.reload
       end
 
@@ -154,7 +154,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :disable do
         abort "Sorry, auto-disabling sites is not supported on your version of Apache." unless exists?(:apache_disable_script)
 
-        run "#{sudo} #{apache_disable_script} #{deploy_name}"
+        run "#{sudo} #{apache_disable_script} #{deploy_site_name}"
         apache.reload
       end
     end
@@ -166,7 +166,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         virtual_host_config = <<-VHOST
           <VirtualHost #{web_server_ip}:443>
-            ServerName #{deploy_name}
+            ServerName #{deploy_site_name}
             DocumentRoot #{deploy_to}/current/public
 
             SSLEngine on
@@ -202,14 +202,14 @@ Capistrano::Configuration.instance(:must_exist).load do
           </VirtualHost>
 
           <VirtualHost #{web_server_ip}:80>
-            ServerName #{deploy_name}
+            ServerName #{deploy_site_name}
 
-            Redirect   permanent / https://#{deploy_name}
+            Redirect   permanent / https://#{deploy_site_name}
           </VirtualHost>
         VHOST
 
-        put virtual_host_config, "#{user_home}/#{deploy_name}"
-        run "#{sudo} mv #{user_home}/#{deploy_name} /etc/apache2/sites-available"
+        put virtual_host_config, "#{user_home}/#{deploy_site_name}"
+        run "#{sudo} mv #{user_home}/#{deploy_site_name} /etc/apache2/sites-available"
         run "#{sudo} /etc/init.d/apache2 reload"
       end
 
@@ -217,7 +217,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :remove do
         abort "Sorry, auto-removing sites is not supported on your version of Apache." unless exists?(:apache_disable_script)
 
-        run "#{sudo} rm /etc/apache2/sites-available/#{deploy_name}"
+        run "#{sudo} rm /etc/apache2/sites-available/#{deploy_site_name}"
         run "#{sudo} /etc/init.d/apache2 reload"
       end
     end

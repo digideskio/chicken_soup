@@ -107,8 +107,8 @@ Capistrano::Configuration.instance(:must_exist).load do
           :user_home,
           :deployment_user_home,
           :manager_user_home,
-          :deploy_name,
           :deploy_base_dir,
+          :deploy_site_name,
           :deploy_to,
           :app_server_ip,
           :web_server_ip,
@@ -139,9 +139,9 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :user_home,             "/home/#{user}"
         _cset :manager_user_home,     "/home/#{manager_username}"
         _cset :deployment_user_home,  "/home/#{deployment_username}"
-        _cset :deploy_name,           "#{application_short}.#{domain}"
-        set   :deploy_to,             "#{deploy_dir}/#{deploy_name}"
         _cset :deploy_base_dir,       "/var/www"
+        _cset :deploy_site_name,      domain
+        set   :deploy_to,             "#{deploy_base_dir}/#{deploy_site_name}"
 
         _cset :keep_releases,         15
 

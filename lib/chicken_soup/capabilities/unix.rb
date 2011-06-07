@@ -147,9 +147,9 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         _cset :global_shared_files,   ["config/database.yml"]
 
-        _cset :app_server_ip,         server_ip
-        _cset :web_server_ip,         server_ip
-        _cset :db_server_ip,          server_ip
+        _cset :app_server_ip,         default_server_ip
+        _cset :web_server_ip,         default_server_ip
+        _cset :db_server_ip,          default_server_ip
 
         _cset :app_server_name,       server_name
         _cset :web_server_name,       server_name

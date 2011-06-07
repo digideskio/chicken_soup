@@ -77,7 +77,7 @@ end
 #   the variables are not set.
 #
 # @example Using an array:
-#   verify_variables [:user, :deploy_dir, :app_server]
+#   verify_variables [:user, :deploy_base_dir, :app_server]
 #
 def verify_variables(required_variables)
   required_variables.each do |expected_variable|

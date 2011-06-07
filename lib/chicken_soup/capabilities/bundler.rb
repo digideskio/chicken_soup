@@ -23,7 +23,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :install do
       bundler_install_command = "gem install bundler --version #{gem_packager_version} --no-ri --no-rdoc && gem cleanup bundler"
 
-      if capabilities.include? :rvm
+      if fetch(:capabilities).include? :rvm
         run_with_rvm "#{ruby_version}@global", bundler_install_command
       else
         run bundler_install_command

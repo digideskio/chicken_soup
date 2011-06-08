@@ -8,6 +8,8 @@ Capistrano::Configuration.instance(:must_exist).load do
   run_task "db:create",       :as => :manager_username
   run_task "db:drop",         :as => :manager_username
 
+  before   'db:backup',       'db:backup:check'
+
   namespace :db do
     desc <<-DESC
       Calls the rake task `db:backup` on the server for the given environment.
@@ -17,9 +19,18 @@ Capistrano::Configuration.instance(:must_exist).load do
       * The filenames are formatted with the timestamp of the backup.
       * After export, each file is zipped up using a bzip2 compression format.
     DESC
-    task :backup do
-      run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
-      run "cd #{current_path} && bundle exec rake BACKUP_DIRECTORY=#{shared_path}/db_backups RAILS_ENV=#{rails_env} db:backup"
+    namespace :backup do
+      task :default do
+        run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
+        run "cd #{current_path} && bundle exec rake BACKUP_DIRECTORY=#{shared_path}/db_backups RAILS_ENV=#{rails_env} db:backup"
+      end
+
+      desc "[internal] Used to check to see if the db:backup task exists on the server."
+      task :check do
+        backup_task_exists = capture "cd #{current_path} && bundle exec rake -T | grep -q db:backup && if [ $? -eq 0 ]; then echo -n 'found'; fi"
+
+        abort("There must be a task named db:backup in order to deploy.  If you'd like to override this, create a db:backup task which does nothing.") if backup_task_exists != 'found'
+      end
     end
 
     desc <<-DESC

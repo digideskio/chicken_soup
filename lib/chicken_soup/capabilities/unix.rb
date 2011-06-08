@@ -52,11 +52,11 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   namespace :os do
     namespace :users do
-      namespace :root do
+      namespace :superuser do
         desc <<-DESC
-          [internal] Switches Capistrano to use the root user for all subsequent SSH actions.
+          [internal] Switches Capistrano to use the superuser account for all subsequent SSH actions.
 
-          It will prompt for the root user's password the first time it's needed.
+          It will prompt for the superuser's password the first time it's needed.
         DESC
         task :use do
           set_user_to("root")

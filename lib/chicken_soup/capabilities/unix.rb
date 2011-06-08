@@ -143,10 +143,6 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :deploy_site_name,      domain
         set   :deploy_to,             "#{deploy_base_dir}/#{deploy_site_name}"
 
-        _cset :keep_releases,         15
-
-        _cset :global_shared_files,   ["config/database.yml"]
-
         _cset :app_server_ip,         default_server_ip
         _cset :web_server_ip,         default_server_ip
         _cset :db_server_ip,          default_server_ip

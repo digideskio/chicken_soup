@@ -40,6 +40,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         _cset :copy_compression,          :bz2
 
+        _cset :keep_releases,             15
+
+        _cset :global_shared_files,       ["config/database.yml"]
+
         _cset(:application_short)         {application}
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
       end

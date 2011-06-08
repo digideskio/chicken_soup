@@ -41,7 +41,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       Warning: This task cannot be called in production mode.  If you truely wish
               to run this in production, you'll need to log into the server and
-              run the rake task manually.
+              run the rake task manually or use Capistrano's `console` task.
     DESC
     task :reset_and_seed do
       raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
@@ -58,7 +58,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       Warning: This task cannot be called in production mode.  If you truely wish
               to run this in production, you'll need to log into the server and
-              run the rake task manually.
+              run the rake task manually or use Capistrano's `console` task.
     DESC
     task :seed do
       raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'

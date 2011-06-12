@@ -112,3 +112,7 @@ end
 def remote_file_exists?(file)
   capture("if [ -f #{file} ]; then echo 'exists'; fi;").chomp == "exists"
 end
+
+def require_if_exists(file)
+  require file if File.exists?(File.join(File.dirname(__FILE__), '..', "#{file}.rb"))
+end

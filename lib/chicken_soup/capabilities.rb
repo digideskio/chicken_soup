@@ -17,30 +17,14 @@ Capistrano::Configuration.instance(:must_exist).load do
   require 'chicken_soup/capabilities/defaults'
   require "chicken_soup/capabilities/checks"
 
-  desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
-  task :load_capability_defaults do
-    require "chicken_soup/capabilities/#{deployment_type}-defaults"
+  ['defaults', 'checks', 'tasks'].each do |method|
+    desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
+    task "load_capability_#{method}".to_sym do
+      require_if_exists "chicken_soup/capabilities/#{deployment_type}/#{deployment_type}-#{method}"
 
-    fetch(:capabilities).each do |capability|
-      require "chicken_soup/capabilities/#{capability}-defaults"
-    end
-  end
-
-  desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
-  task :load_capability_checks do
-    require "chicken_soup/capabilities/#{deployment_type}-checks"
-
-    fetch(:capabilities).each do |capability|
-      require "chicken_soup/capabilities/#{capability}-checks"
-    end
-  end
-
-  desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
-  task :load_capability_tasks do
-    require "chicken_soup/capabilities/#{deployment_type}-tasks"
-
-    fetch(:capabilities).each do |capability|
-      require "chicken_soup/capabilities/#{capability}-tasks"
+      fetch(:capabilities).each do |capability|
+        require_if_exists "chicken_soup/capabilities/#{capability}/#{capability}-#{method}"
+      end
     end
   end
 end

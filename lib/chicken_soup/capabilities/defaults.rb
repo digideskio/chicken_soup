@@ -31,7 +31,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         Most of these values can be overridden in each application's deploy.rb file.
       DESC
       task :default do
-        defaults.send(deployment_type.to_s)
+        capabilities.defaults.send(deployment_type.to_s)
 
         if exists?(:capabilities)
           fetch(:capabilities).each do |capability|

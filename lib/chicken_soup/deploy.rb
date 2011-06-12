@@ -5,8 +5,6 @@ Capistrano::Configuration.instance(:must_exist).load do
   before "deploy",          "deploy:web:disable"
   after  "deploy",          "deploy:web:enable"
 
-  before "deploy:migrate",  "db:backup"
-
   namespace :deploy do
     desc <<-DESC
       [internal] The list of tasks used by `deploy`, `deploy:cold`, `deploy:subzero` and `deploy:initial`

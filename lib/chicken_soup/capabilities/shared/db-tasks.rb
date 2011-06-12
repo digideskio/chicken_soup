@@ -21,13 +21,13 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     namespace :backup do
       task :default do
-        run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
         run "cd #{current_path} && BACKUP_DIRECTORY=#{shared_path}/db_backups #{rake} db:backup"
       end
 
       desc "[internal] Used to check to see if the db:backup task exists on the server."
       task :check do
         backup_task_exists = capture "cd #{current_path} && #{rake} -T | grep -q db:backup && if [ $? -eq 0 ]; then echo -n 'found'; fi"
+        run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
 
         abort("There must be a task named db:backup in order to deploy.  If you'd like to override this, create a db:backup task which does nothing.") if backup_task_exists != 'found'
       end

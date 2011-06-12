@@ -231,5 +231,5 @@ def find_apache_control_script
     set :apache_control_script,   "/usr/sbin/apache2"
   end
 
-  abort "Couldn't figure out your version of Apache" unless exists?(:apache_control_script)
+  abort "Couldn't figure out how to control your installation of Apache" unless exists?(:apache_control_script)
 end

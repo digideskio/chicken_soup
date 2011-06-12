@@ -33,38 +33,3 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
   end
 end
-
-######################################################################
-#                           BUNDLER CHECKS                           #
-######################################################################
-Capistrano::Configuration.instance(:must_exist).load do
-  namespace :capabilities do
-    namespace :check do
-      desc <<-DESC
-        [internal] Checks to see if all necessary Bundler capabilities variables have been set up.
-      DESC
-      task :bundler do
-        required_variables = [
-          :gem_packager_version
-        ]
-
-        verify_variables(required_variables)
-      end
-    end
-  end
-end
-
-######################################################################
-#                          BUNDLER DEFAULTS                          #
-######################################################################
-Capistrano::Configuration.instance(:must_exist).load do
-  namespace :capabilities do
-    namespace :defaults do
-      desc "[internal] Sets intelligent defaults for Bundler deployments."
-      task :bundler do
-        _cset :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]
-        set   :rake,                  'bundle exec rake'
-      end
-    end
-  end
-end

@@ -12,7 +12,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Update Bundled Gems"
     task :update do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
 
       run "cd #{current_release} && bundle update"
     end

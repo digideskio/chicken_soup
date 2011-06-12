@@ -44,7 +44,7 @@ Capistrano::Configuration.instance(:must_exist).load do
               run the rake task manually or use Capistrano's `console` task.
     DESC
     task :reset_and_seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       run "cd #{current_path} && rake RAILS_ENV=#{rails_env} db:reset_and_seed"
     end
@@ -61,7 +61,7 @@ Capistrano::Configuration.instance(:must_exist).load do
               run the rake task manually or use Capistrano's `console` task.
     DESC
     task :seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       run "cd #{current_path} && rake RAILS_ENV=#{rails_env} db:seed"
     end

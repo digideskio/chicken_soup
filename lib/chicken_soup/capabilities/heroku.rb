@@ -110,7 +110,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       that are valid for a Heroku deployment.
     DESC
     task :raise_error do
-      raise "Deploying the #{rails_env} environment to Heroku.  This command is invalid."
+      abort "Deploying the #{rails_env} environment to Heroku.  This command is invalid."
     end
   end
 
@@ -220,7 +220,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Reset database and seed fresh"
     task :reset_and_seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       `heroku pg:reset`
       `heroku rake db:seed`
@@ -228,7 +228,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Seed database"
     task :seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       `heroku rake db:seed`
     end

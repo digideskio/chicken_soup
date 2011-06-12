@@ -51,7 +51,7 @@ end
 # @todo Remove all previous hooks prior to adding new ones.  Also disable hooks when running "now"
 #
 def run_task(task_name, options = {})
-  raise "#run_task must be passed an `:as` option so that it knows who to change the user to." unless options[:as]
+  abort "#run_task must be passed an `:as` option so that it knows who to change the user to." unless options[:as]
 
   original_username = exists?(:user) ? user : nil
 

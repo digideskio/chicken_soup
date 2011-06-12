@@ -7,7 +7,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       desc "[internal] Sets intelligent defaults for Bundler deployments."
       task :bundler do
         _cset :gem_packager_version,  `gem list bundler`.match(/\((.*)\)/)[1]
-        set   :rake,                  'bundle exec rake'
+        set   :rake,                  "RAILS_ENV=#{rails_env} bundle exec rake"
       end
     end
   end

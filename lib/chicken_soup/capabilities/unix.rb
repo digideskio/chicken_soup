@@ -63,7 +63,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         end
       end
 
-      namespace :manager do
+      namespace :manage do
         desc <<-DESC
           [internal] Switches Capistrano to use the manager user for all subsequent SSH actions.
 

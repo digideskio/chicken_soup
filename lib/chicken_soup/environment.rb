@@ -4,4 +4,5 @@
 Capistrano::Configuration.instance(:must_exist).load do
   require 'chicken_soup/environment/defaults'
   require 'chicken_soup/environment/checks'
+  require 'chicken_soup/environment/tasks'
 end

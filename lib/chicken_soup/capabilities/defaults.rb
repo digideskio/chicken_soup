@@ -21,7 +21,7 @@
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   after   'environment:defaults',       'capabilities:defaults'
-  before  'capabilities:defaults',      'load_capabilities'
+  before  'capabilities:defaults',      'load_capability_defaults'
 
   namespace :capabilities do
     namespace :defaults do

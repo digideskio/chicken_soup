@@ -2,7 +2,8 @@
 #                         CAPABILITIES CHECK                         #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after 'environment:check', 'capabilities:check'
+  after   'environment:check',      'capabilities:check'
+  before  'capabilities:check',     'load_capability_checks'
 
   namespace :capabilities do
     namespace :check do

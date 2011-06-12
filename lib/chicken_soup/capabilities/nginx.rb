@@ -4,14 +4,14 @@
 Capistrano::Configuration.instance(:must_exist).load do
   on        :start,                       'nginx:environment_detection'
 
-  run_task  'web_server:stop',            :as => :manager_username
-  run_task  'web_server:start',           :as => :manager_username
-  run_task  'web_server:restart',         :as => :manager_username
+  run_task  'web_server:stop',            :as => manager_username
+  run_task  'web_server:start',           :as => manager_username
+  run_task  'web_server:restart',         :as => manager_username
 
-  run_task  'website:install',            :as => :manager_username
-  run_task  'website:remove',             :as => :manager_username
-  run_task  'website:enable',             :as => :manager_username
-  run_task  'website:disable',            :as => :manager_username
+  run_task  'website:install',            :as => manager_username
+  run_task  'website:remove',             :as => manager_username
+  run_task  'website:enable',             :as => manager_username
+  run_task  'website:disable',            :as => manager_username
 
   namespace :deploy do
     namespace :web do

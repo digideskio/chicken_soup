@@ -5,8 +5,8 @@ Capistrano::Configuration.instance(:must_exist).load do
   _cset(:db_root_password)    {Capistrano::CLI.password_prompt("Root Password For DB: ")}
   _cset(:db_app_password)     {Capistrano::CLI.password_prompt("App Password For DB: ")}
 
-  run_task "db:create",       :as => :manager_username
-  run_task "db:drop",         :as => :manager_username
+  run_task "db:create",       :as => manager_username
+  run_task "db:drop",         :as => manager_username
 
   before   'db:backup',       'db:backup:check'
 

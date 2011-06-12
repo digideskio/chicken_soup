@@ -30,27 +30,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
   end
 
-  namespace :web_server do
-    desc "Stop the web server"
-    task :stop do
-      run "#{sudo} #{web_server_control_script} stop"
-    end
-
-    desc "Start the web server"
-    task :start do
-      run "#{sudo} #{web_server_control_script} start"
-    end
-
-    desc "Restart the web server"
-    task :restart do
-      run "#{sudo} #{web_server_control_script} restart"
-    end
-
-    desc "Reloads the web server configuration"
-    task :reload do
-      run "#{sudo} #{web_server_control_script} reload"
-    end
-
+  namespace :website do
     namespace :maintenance_mode do
       desc <<-DESC
         Makes the application web-accessible again. Removes the \
@@ -89,6 +69,28 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         put maintenance_page, "#{shared_path}/system/maintenance.html", :mode => 0644
       end
+    end
+  end
+
+  namespace :web_server do
+    desc "Stop the web server"
+    task :stop do
+      run "#{sudo} #{web_server_control_script} stop"
+    end
+
+    desc "Start the web server"
+    task :start do
+      run "#{sudo} #{web_server_control_script} start"
+    end
+
+    desc "Restart the web server"
+    task :restart do
+      run "#{sudo} #{web_server_control_script} restart"
+    end
+
+    desc "Reloads the web server configuration"
+    task :reload do
+      run "#{sudo} #{web_server_control_script} reload"
     end
   end
 end

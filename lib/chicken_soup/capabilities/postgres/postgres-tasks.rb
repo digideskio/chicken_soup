@@ -2,5 +2,5 @@
 #                          POSTGRES TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  require 'chicken_soup/capabilities/shared/db'
+  require 'chicken_soup/capabilities/shared/db-tasks'
 end

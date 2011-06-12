@@ -7,7 +7,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       desc "[internal] Sets intelligent defaults for unix server deployments."
       task :unix do
         _cset :deployment_username,   "deploy"
-        _cset :manager_username,      "manager"
+        _cset :manager_username,      "manage"
         _cset :user,                  deployment_username
 
         _cset :user_home,             "/home/#{user}"

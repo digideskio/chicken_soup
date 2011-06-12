@@ -22,12 +22,12 @@ Capistrano::Configuration.instance(:must_exist).load do
     namespace :backup do
       task :default do
         run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
-        run "cd #{current_path} && bundle exec rake BACKUP_DIRECTORY=#{shared_path}/db_backups RAILS_ENV=#{rails_env} db:backup"
+        run "cd #{current_path} && BACKUP_DIRECTORY=#{shared_path}/db_backups #{rake} db:backup"
       end
 
       desc "[internal] Used to check to see if the db:backup task exists on the server."
       task :check do
-        backup_task_exists = capture "cd #{current_path} && bundle exec rake -T | grep -q db:backup && if [ $? -eq 0 ]; then echo -n 'found'; fi"
+        backup_task_exists = capture "cd #{current_path} && #{rake} -T | grep -q db:backup && if [ $? -eq 0 ]; then echo -n 'found'; fi"
 
         abort("There must be a task named db:backup in order to deploy.  If you'd like to override this, create a db:backup task which does nothing.") if backup_task_exists != 'found'
       end
@@ -46,7 +46,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :reset_and_seed do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
-      run "cd #{current_path} && rake RAILS_ENV=#{rails_env} db:reset_and_seed"
+      run "cd #{current_path} && #{rake} db:reset_and_seed"
     end
 
     desc <<-DESC
@@ -63,7 +63,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :seed do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
-      run "cd #{current_path} && rake RAILS_ENV=#{rails_env} db:seed"
+      run "cd #{current_path} && #{rake} db:seed"
     end
   end
 end

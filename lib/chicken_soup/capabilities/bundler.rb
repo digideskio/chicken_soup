@@ -2,7 +2,9 @@
 #                           BUNDLER TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  before 'gems:install',      'bundler:install'
+  before    'gems:install',       'bundler:install'
+
+  run_task  'bundler:install',    :as => manager_username
 
   namespace :gems do
     desc "Install Bundled Gems"

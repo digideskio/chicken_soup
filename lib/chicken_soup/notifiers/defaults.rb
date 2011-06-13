@@ -2,7 +2,7 @@
 #                        DEFAULT NOTIFIERS SETUP                     #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  before  'notifiers:defaults',         'load_notifiers'
+  before  'notifiers:defaults',         'load_notifier_defaults'
 
   namespace :notifiers do
     namespace :defaults do

@@ -21,6 +21,8 @@ Capistrano::Configuration.instance(:must_exist).load do
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
+  after   'environment:defaults',       'capabilities:defaults'
+
   namespace :environment do
     namespace :defaults do
       desc "[internal] Used to set up the intelligent staging defaults we like for our projects"

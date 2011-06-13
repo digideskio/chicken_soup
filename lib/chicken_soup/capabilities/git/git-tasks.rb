@@ -6,7 +6,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc <<-DESC
     DESC
     task :log do
-      set :vc_log, `git log #{previous_revision}..#{current_revision} --pretty=format:%h:%s`
+      set :vc_log, `git log #{previous_revision}..#{current_revision} --pretty=format:%ai:::%an:::%s`
     end
   end
 end

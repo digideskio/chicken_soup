@@ -18,8 +18,8 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after   'production',                 'environment:defaults:production', 'environment:defaults'
-  after   'staging',                    'environment:defaults:staging',    'environment:defaults'
+  after   'production',                 'environment:defaults:production', 'environment:init'
+  after   'staging',                    'environment:defaults:staging',    'environment:init'
 
   namespace :environment do
     namespace :defaults do

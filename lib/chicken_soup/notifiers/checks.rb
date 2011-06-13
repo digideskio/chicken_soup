@@ -2,8 +2,6 @@
 #                           NOTIFIERS CHECK                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after 'environment:check', 'notifiers:check'
-
   namespace :notifiers do
     namespace :check do
       desc "[internal] Runs checks for all of the notifiers listed."

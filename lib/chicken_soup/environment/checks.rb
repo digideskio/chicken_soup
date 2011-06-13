@@ -17,7 +17,7 @@
 Capistrano::Configuration.instance(:must_exist).load do
   on      :start,               'environment:check',    :except => ['staging', 'production']
 
-  after   'environment:check',  'capabilities:check'
+  after   'environment:check',  'capabilities:check', 'notifiers:check'
 
   namespace :environment do
     desc "[internal] Checks for environment variables shared among all deployment types."

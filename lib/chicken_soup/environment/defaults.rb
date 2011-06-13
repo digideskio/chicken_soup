@@ -21,7 +21,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
-  after   'environment:defaults',       'capabilities:defaults'
+  after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults'
 
   namespace :environment do
     namespace :defaults do

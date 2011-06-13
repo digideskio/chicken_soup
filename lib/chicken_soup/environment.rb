@@ -11,7 +11,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :init do
       environment.defaults
       environment.check
-      environment.tasks
+      environment.load_tasks
     end
   end
 end

@@ -25,7 +25,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       changes, Passenger restarts the app.
     DESC
     task :restart, :except => { :no_release => true } do
-      run "touch #{File.join(current_path,'tmp','restart.txt')}"
+      run "touch #{File.join( current_path, 'tmp', 'restart.txt' )}"
     end
   end
 end

@@ -1,6 +1,6 @@
 ######################################################################
-#                           HOPTOAD TASKS                            #
+#                          POSTGRES TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  # require 'hoptoad_notifier/capistrano'
+  require 'chicken_soup/capabilities/shared/db-tasks'
 end

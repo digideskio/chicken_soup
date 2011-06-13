@@ -33,14 +33,14 @@ Capistrano::Configuration.instance(:must_exist).load do
         Installs a new domain for the application on the Heroku server.
       DESC
       task :install do
-        `heroku domains:add #{deploy_name}`
+        `heroku domains:add #{deploy_site_name}`
       end
 
       desc <<-DESC
         Removes the domain for the application from the Heroku server.
       DESC
       task :remove do
-        `heroku domains:remove #{deploy_name}`
+        `heroku domains:remove #{deploy_site_name}`
       end
 
       namespace :addon do
@@ -110,7 +110,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       that are valid for a Heroku deployment.
     DESC
     task :raise_error do
-      raise "Deploying the #{rails_env} environment to Heroku.  This command is invalid."
+      abort "Deploying the #{rails_env} environment to Heroku.  This command is invalid."
     end
   end
 
@@ -220,7 +220,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Reset database and seed fresh"
     task :reset_and_seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       `heroku pg:reset`
       `heroku rake db:seed`
@@ -228,7 +228,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc "Seed database"
     task :seed do
-      raise "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       `heroku rake db:seed`
     end
@@ -242,45 +242,5 @@ Capistrano::Configuration.instance(:must_exist).load do
   desc "Invoke a single command on the Heroku server."
   task :invoke do
     `heroku invoke #{ENV['COMMAND']}`
-  end
-end
-
-######################################################################
-#                     HEROKU ENVIRONMENT CHECKS                      #
-######################################################################
-Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
-    namespace :check do
-      desc <<-DESC
-        [internal] Checks to see if all necessary Heroku environment variables have been set up.
-      DESC
-      task :heroku do
-        required_variables = [
-          :deploy_name,
-          :user,
-          :heroku_credentials_path,
-          :heroku_credentials_file
-        ]
-
-        verify_variables(required_variables)
-      end
-    end
-  end
-end
-
-######################################################################
-#                  DEFAULT HEROKU ENVIRONMENT SETUP                  #
-######################################################################
-Capistrano::Configuration.instance(:must_exist).load do
-  namespace :environment do
-    namespace :defaults do
-      desc "[internal] Sets intelligent defaults for Heroku deployments"
-      task :heroku do
-        _cset :heroku_credentials_path,   "#{ENV["HOME"]}/.heroku"
-        _cset :heroku_credentials_file,   "#{heroku_credentials_path}/credentials"
-
-        _cset(:password)                  {Capistrano::CLI.password_prompt("Encrypted Heroku Password: ")}
-      end
-    end
   end
 end

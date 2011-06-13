@@ -2,14 +2,16 @@
 #                          ENVIRONMENT SETUP                         #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  require 'chicken_soup/environment/checks'
   require 'chicken_soup/environment/defaults'
+  require 'chicken_soup/environment/checks'
+  require 'chicken_soup/environment/tasks'
 
-  desc "[internal] This task is only here because `require` cannot be used within a `namespace`"
-  task :load_capabilities do
-    require "chicken_soup/capabilities/unix"
-    capabilities.each do |capability|
-      require "chicken_soup/capabilities/#{capability}"
+  namespace :environment do
+    desc "[internal] Load the Chicken Soup environment"
+    task :init do
+      environment.defaults.default
+      environment.check
+      environment.load_tasks
     end
   end
 end

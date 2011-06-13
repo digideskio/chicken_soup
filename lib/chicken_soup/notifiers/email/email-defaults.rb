@@ -3,7 +3,7 @@
 ######################################################################
 require 'mail'
 require 'erb'
-require 'chicken_soup/notifiers/email_notifier'
+require 'chicken_soup/notifiers/email/presenter'
 
 Capistrano::Configuration.instance(:must_exist).load do |cap|
   namespace :notifiers do
@@ -33,9 +33,9 @@ Capistrano::Configuration.instance(:must_exist).load do |cap|
         _cset :email_notifier_client_template,     read_template("client_email.#{email_notifier_format}.erb")
         _cset :email_notifier_internal_template,   read_template("internal_email.#{email_notifier_format}.erb")
 
-        email_notifier = ChickenSoup::EmailNotifier.new(cap)
-        _cset :email_notifier_client_body,         render_erb(email_notifier_client_template, email_notifier)
-        _cset :email_notifier_internal_body,       render_erb(email_notifier_internal_template, email_notifier)
+        email_presenter= ChickenSoup::Email::Presenter.new(cap)
+        _cset :email_notifier_client_body,         render_erb(email_notifier_client_template, email_presenter)
+        _cset :email_notifier_internal_body,       render_erb(email_notifier_internal_template, email_presenter)
       end
     end
   end

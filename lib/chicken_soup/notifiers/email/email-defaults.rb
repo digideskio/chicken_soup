@@ -6,8 +6,6 @@ require 'erb'
 require 'chicken_soup/notifiers/email_notifier'
 
 Capistrano::Configuration.instance(:must_exist).load do |cap|
-  before    'notifiers:defaults:email',            'vc:log'
-
   namespace :notifiers do
     namespace :defaults do
       task :email do

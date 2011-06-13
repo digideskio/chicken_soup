@@ -1,53 +1,8 @@
 ######################################################################
-#                        EMAIL NOTIFIER TASKS                        #
+#                       EMAIL NOTIFIER DEFAULTS                      #
 ######################################################################
 require 'mail'
 
-Capistrano::Configuration.instance(:must_exist).load do |cap|
-  before    'notify:by_email',            'vc:log'
-  before    'deploy:clean',               'notify:by_email'
-
-  namespace :notify do
-    desc <<-DESC
-      [internal] Sends a notification via email once a deployment is complete.
-    DESC
-    task :by_email do
-      Mail.deliver do
-             to cap[:email_notifier_recipients]
-           from cap[:email_notifier_sender]
-        subject cap[:email_notifier_subject]
-           body cap[:email_notifier_body]
-      end
-    end
-  end
-end
-
-######################################################################
-#                       EMAIL NOTIFIER CHECKS                        #
-######################################################################
-Capistrano::Configuration.instance(:must_exist).load do
-  namespace :notifiers do
-    namespace :check do
-      desc <<-DESC
-        [internal] Checks to see if all necessary email notification environment variables have been set up.
-      DESC
-      task :email do
-        required_variables = [
-          :email_notifier_recipients,
-          :email_notifier_domain,
-          :email_notifier_username,
-          :email_notifier_password
-        ]
-
-        verify_variables(required_variables)
-      end
-    end
-  end
-end
-
-######################################################################
-#                       EMAIL NOTIFIER DEFAULTS                      #
-######################################################################
 Capistrano::Configuration.instance(:must_exist).load do |cap|
   namespace :notifiers do
     namespace :defaults do

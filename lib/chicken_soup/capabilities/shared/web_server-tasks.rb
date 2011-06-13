@@ -12,6 +12,9 @@ Capistrano::Configuration.instance(:must_exist).load do
   run_task  'website:enable',             :as => manager_username
   run_task  'website:disable',            :as => manager_username
 
+  before    'deploy',                     'deploy:web:disable'
+  after     'deploy',                     'deploy:web:enable'
+
   namespace :deploy do
     namespace :web do
       desc <<-DESC

@@ -114,7 +114,7 @@ end
 #   remote_file_exists? '/var/www/myappdir/current'
 #
 def remote_file_exists?(file)
-  capture("if [[ -d #{dir} ]] || [[ -h #{dir} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == "exists"
+  capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == "exists"
 end
 
 def require_if_exists(file)

@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :base do
       transaction do
         deploy.update
-        deploy.config.symlink
+        deploy.shared_files.symlink
         gems.install
         deploy.migrate
         deploy.cleanup

@@ -99,18 +99,22 @@ end
 ###
 # Runs a command on the remote server to see if the file currently exists.
 #
-# @param [String] file The filename (optionally including path) that is may
-#   or may not exist.
+# @param [String] file The filename (optionally including path), directory,
+#   or symlink that is may or may not exist.
 #
-# @return [Boolean] Whether or not the file exists.
+# @return [Boolean] Whether or not the file, directory or symlink exists.
 #
 # @example File without path:
 #   remote_file_exists? 'server.log'
 # @example File with path:
 #   remote_file_exists? '/var/www/myappdir/log/production.log'
+# @example Directory:
+#   remote_file_exists? '/var/www/myappdir/log'
+# @example Symbolic Link:
+#   remote_file_exists? '/var/www/myappdir/current'
 #
 def remote_file_exists?(file)
-  capture("if [ -f #{file} ]; then echo 'exists'; fi;").chomp == "exists"
+  capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == "exists"
 end
 
 def require_if_exists(file)

@@ -6,7 +6,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   namespace :website do
     desc "Creates the site configuration for the files."
-    task :create do
+    task :create, :roles => :web do
       abort "Sorry, auto-installing sites is not supported on your version of Apache." unless exists?(:apache_disable_script)
 
       virtual_host_config = <<-VHOST
@@ -59,7 +59,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc "Completely removes the site configuration from the server (but leaves the files.)"
-    task :remove do
+    task :remove, :roles => :web do
       abort "Sorry, auto-removing sites is not supported on your version of Apache." unless exists?(:apache_disable_script)
 
       run "#{sudo} rm /etc/apache2/sites-available/#{deploy_site_name}"
@@ -67,7 +67,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc "Enable Site"
-    task :enable do
+    task :enable, :roles => :web do
       abort "Sorry, auto-enabling sites is not supported on your version of Apache." unless exists?(:apache_enable_script)
 
       run "#{sudo} #{apache_enable_script} #{deploy_site_name}"
@@ -75,7 +75,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc "Disable Site"
-    task :disable do
+    task :disable, :roles => :web do
       abort "Sorry, auto-disabling sites is not supported on your version of Apache." unless exists?(:apache_disable_script)
 
       run "#{sudo} #{apache_disable_script} #{deploy_site_name}"

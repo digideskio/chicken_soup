@@ -15,7 +15,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         variable.
       * The DB user will be granted all privileges on the DB.
     DESC
-    task :create do
+    task :create, :roles => :db do
       create_script = <<-CREATESCRIPT
         create database #{application_underscored} character set utf8;
         create user '#{application_underscored}'@'localhost' identified by '#{db_app_password}';
@@ -34,7 +34,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       * The script is executed as `root` and as such, the user will be prompted
         for `root`'s password.
     DESC
-    task :drop do
+    task :drop, :roles => :db do
       drop_script = <<-DROPSCRIPT
         drop user #{application_underscored}@localhost;
         drop database #{application_underscored};

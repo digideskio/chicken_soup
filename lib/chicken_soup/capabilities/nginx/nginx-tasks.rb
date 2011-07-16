@@ -6,7 +6,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   namespace :website do
     desc "Creates the site configuration for the files."
-    task :create do
+    task :create, :roles => :web do
       abort "Sorry, auto-installing sites is not supported on your installation of Nginx." unless exists?(:nginx_disable_script)
 
       passenger_friendly_error_messages = rails_env == :production ? "off" : "on"
@@ -65,7 +65,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc "Completely removes the site configuration from the server (but leaves the files.)"
-    task :remove do
+    task :remove, :roles => :web do
       abort "Sorry, auto-removing sites is not supported on your installation of Nginx." unless exists?(:nginx_disable_script)
 
       run "#{sudo} rm /etc/nginx/sites-available/#{deploy_site_name}"
@@ -73,12 +73,12 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc "Enable Site"
-    task :enable do
+    task :enable, :roles => :web do
       abort "Sorry, auto-enabling sites is not supported on your installation of Nginx." unless exists?(:nginx_enable_script)
     end
 
     desc "Disable Site"
-    task :disable do
+    task :disable, :roles => :web do
       abort "Sorry, auto-disabling sites is not supported on your installation of Nginx." unless exists?(:nginx_disable_script)
     end
   end

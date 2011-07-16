@@ -30,7 +30,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         Note: This task will also work for setting up shared directories for user uploads, etc.
       DESC
-      task :setup do
+      task :setup, :roles => :app do
         global_shared_elements.each do |shared_file|
           base_dir_of_shared_file         = shared_file.match(%r{/?((?:.*)/)})[1]
           run "mkdir -p '#{shared_path}/#{base_dir_of_shared_file}'"
@@ -56,7 +56,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         By default, these live in the shared directory that Capistrano sets up.
       DESC
-      task :symlink do
+      task :symlink, :roles => :app do
         global_shared_elements.each do |shared_file|
           run "ln -nfs #{shared_path}/#{shared_file} #{latest_release}/#{shared_file}"
         end

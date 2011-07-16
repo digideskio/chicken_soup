@@ -21,9 +21,9 @@ Capistrano::Configuration.instance(:must_exist).load do
           :app_server_ip,
           :web_server_ip,
           :db_server_ip,
-          :web_server_name,
-          :app_server_name,
-          :db_server_name
+          :web_servers,
+          :app_servers,
+          :db_servers
         ]
 
         verify_variables(required_variables)

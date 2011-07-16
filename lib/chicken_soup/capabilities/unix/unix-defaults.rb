@@ -23,9 +23,9 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         _cset :default_server_name,   domain
 
-        _cset(:app_server_name)       { default_server_name }
-        _cset(:web_server_name)       { default_server_name }
-        _cset(:db_server_name)        { default_server_name }
+        _cset(:app_servers)           { default_server_name }
+        _cset(:web_servers)           { default_server_name }
+        _cset(:db_servers)            { default_server_name }
 
         # Evidently roles can't be assigned in a namespace :-/
         set_unix_server_roles
@@ -35,8 +35,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   desc "[internal] This task is only here because `role` cannot be used within a `namespace`"
   task :set_unix_server_roles do
-    role :web,                  web_server_name
-    role :app,                  app_server_name
-    role :db,                   db_server_name,  :primary => true
+    role :web,                  web_servers
+    role :app,                  app_servers
+    role :db,                   db_servers, :primary => true
   end
 end

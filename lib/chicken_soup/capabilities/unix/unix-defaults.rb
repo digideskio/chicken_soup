@@ -35,8 +35,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   desc "[internal] This task is only here because `role` cannot be used within a `namespace`"
   task :set_unix_server_roles do
-    role :web,                  web_server_name, :primary => true
-    role :app,                  app_server_name, :primary => true
+    role :web,                  web_server_name
+    role :app,                  app_server_name
     role :db,                   db_server_name,  :primary => true
   end
 end

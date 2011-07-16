@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.email                 = 'support@thekompanee.com'
   s.homepage              = 'http://github.com/jfelchner/chicken_soup'
 
-  s.summary               = "chicken_soup-#{ChickenSoup::VERSION}"
-  s.description           = %q[...for the Deployment Soul.  Why do you keep typing all that crap into your Capistrano recipes?  Are you too cool for standards?  Well, ARE YA!?]
+  s.summary               = "...for the Deployment Soul."
+  s.description           = %q[Why do you keep typing all that crap into your Capistrano recipes?  Are you too cool for standards?  Well, ARE YA!?]
 
   s.rdoc_options          = ["--charset = UTF-8"]
   s.extra_rdoc_files      = %w[README.md LICENSE]

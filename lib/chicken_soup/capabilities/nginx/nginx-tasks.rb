@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :create, :roles => :web do
       abort "Sorry, auto-installing sites is not supported on your installation of Nginx." unless exists?(:nginx_disable_script)
 
-      passenger_friendly_error_messages = rails_env == :production ? "off" : "on"
+      passenger_friendly_error_pages = rails_env == :production ? "off" : "on"
 
       virtual_host_config = <<-VHOST
         server {

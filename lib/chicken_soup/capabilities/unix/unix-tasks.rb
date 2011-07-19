@@ -38,12 +38,13 @@ Capistrano::Configuration.instance(:must_exist).load do
           remote_shared_file              = "#{shared_path}/#{shared_file}"
           local_shared_file               = "#{Dir.pwd}/#{shared_file}"
           local_environment_specific_file = "#{local_shared_file}.#{rails_env}"
+          permissions                     = File.directory? local_shared_file ? "755" : "600"
 
           if File.exists?(local_environment_specific_file)
-            top.upload(local_environment_specific_file, remote_shared_file, :mode => "600")
+            top.upload(local_environment_specific_file, remote_shared_file, :mode => permissions)
           elsif !remote_file_exists?(remote_shared_file)
             if File.exists?(local_shared_file)
-              top.upload(local_shared_file, remote_shared_file, :mode => "600")
+              top.upload(local_shared_file, remote_shared_file, :mode => permissions)
             else
               abort "I'm sorry Dave, but I couldn't find a local file or directory at '#{local_shared_file}' or '#{local_environment_specific_file}'"
             end

@@ -22,12 +22,12 @@ Capistrano::Configuration.instance(:must_exist).load do
       * After export, each file is zipped up using a bzip2 compression format.
     DESC
     namespace :backup do
-      task :default do
+      task :default, :roles => :db, :only => {:primary => true} do
         run "cd #{current_path} && BACKUP_DIRECTORY=#{shared_path}/db_backups #{rake} db:backup"
       end
 
       desc "[internal] Used to check to see if the db:backup task exists on the server."
-      task :check do
+      task :check, :roles => :db do
         backup_task_exists = capture("cd #{current_path} && #{rake} -T | grep db:backup | wc -l").chomp
         abort("There must be a task named db:backup in order to deploy.  If you do not want to backup your DB during deployments, set the skip_backup_before_migration variable to true in your deploy.rb.") if backup_task_exists == '0'
 
@@ -45,7 +45,7 @@ Capistrano::Configuration.instance(:must_exist).load do
               to run this in production, you'll need to log into the server and
               run the rake task manually or use Capistrano's `console` task.
     DESC
-    task :reset_and_seed do
+    task :reset_and_seed, :roles => :db do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       run "cd #{current_path} && #{rake} db:reset_and_seed"
@@ -62,7 +62,7 @@ Capistrano::Configuration.instance(:must_exist).load do
               to run this in production, you'll need to log into the server and
               run the rake task manually or use Capistrano's `console` task.
     DESC
-    task :seed do
+    task :seed, :roles => :db do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       run "cd #{current_path} && #{rake} db:seed"

@@ -8,14 +8,14 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       This task does nothing.
     DESC
-    task :start do ; end
+    task :start, :roles => :app do ; end
 
     desc <<-DESC
       There is no way to stop the application via Passenger.
 
       This task does nothing.
     DESC
-    task :stop do ; end
+    task :stop, :roles => :app do ; end
 
     desc <<-DESC
       Starts/Restarts the application.
@@ -24,7 +24,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       directory called `restart.txt`.  If the Last Access time for `restart.txt`
       changes, Passenger restarts the app.
     DESC
-    task :restart, :except => { :no_release => true } do
+    task :restart, :roles => :app do
       run "touch #{File.join( current_path, 'tmp', 'restart.txt' )}"
     end
   end

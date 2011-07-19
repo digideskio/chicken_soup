@@ -20,14 +20,14 @@ Capistrano::Configuration.instance(:must_exist).load do
       desc <<-DESC
         Enables the website's application by removing the maintenance page.
       DESC
-      task :enable do
+      task :enable, :roles => :web do
         website.maintenance_mode.disable
       end
 
       desc <<-DESC
         Disables the website's application by installing the maintenance page.
       DESC
-      task :disable do
+      task :disable, :roles => :web do
         website.maintenance_mode.enable
       end
     end
@@ -41,7 +41,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         web servers are configured correctly) will make your application \
         web-accessible again.
       DESC
-      task :disable, :except => { :no_release => true } do
+      task :disable, :roles => :web do
         run "rm #{shared_path}/system/maintenance.html"
       end
 
@@ -61,7 +61,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         Further customization will require that you write your own task.
       DESC
-      task :enable, :except => { :no_release => true } do
+      task :enable, :roles => :web do
         on_rollback { rm "#{shared_path}/system/maintenance.html" }
 
         require 'erb'
@@ -77,22 +77,22 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   namespace :web_server do
     desc "Stop the web server"
-    task :stop do
+    task :stop, :roles => :web do
       run "#{sudo} #{web_server_control_script} stop"
     end
 
     desc "Start the web server"
-    task :start do
+    task :start, :roles => :web do
       run "#{sudo} #{web_server_control_script} start"
     end
 
     desc "Restart the web server"
-    task :restart do
+    task :restart, :roles => :web do
       run "#{sudo} #{web_server_control_script} restart"
     end
 
     desc "Reloads the web server configuration"
-    task :reload do
+    task :reload, :roles => :web do
       run "#{sudo} #{web_server_control_script} reload"
     end
   end

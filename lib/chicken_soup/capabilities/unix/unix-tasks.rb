@@ -30,7 +30,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         Note: This task will also work for setting up shared directories for user uploads, etc.
       DESC
-      task :setup do
+      task :setup, :roles => :app do
         global_shared_elements.each do |shared_file|
           base_dir_of_shared_file         = shared_file.match(%r{/?((?:.*)/)})[1]
           run "mkdir -p '#{shared_path}/#{base_dir_of_shared_file}'"
@@ -38,12 +38,13 @@ Capistrano::Configuration.instance(:must_exist).load do
           remote_shared_file              = "#{shared_path}/#{shared_file}"
           local_shared_file               = "#{Dir.pwd}/#{shared_file}"
           local_environment_specific_file = "#{local_shared_file}.#{rails_env}"
+          permissions                     = File.directory? local_shared_file ? "755" : "600"
 
           if File.exists?(local_environment_specific_file)
-            top.upload(local_environment_specific_file, remote_shared_file, :mode => "600")
+            top.upload(local_environment_specific_file, remote_shared_file, :mode => permissions)
           elsif !remote_file_exists?(remote_shared_file)
             if File.exists?(local_shared_file)
-              top.upload(local_shared_file, remote_shared_file, :mode => "600")
+              top.upload(local_shared_file, remote_shared_file, :mode => permissions)
             else
               abort "I'm sorry Dave, but I couldn't find a local file or directory at '#{local_shared_file}' or '#{local_environment_specific_file}'"
             end
@@ -56,7 +57,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         By default, these live in the shared directory that Capistrano sets up.
       DESC
-      task :symlink do
+      task :symlink, :roles => :app do
         global_shared_elements.each do |shared_file|
           run "ln -nfs #{shared_path}/#{shared_file} #{latest_release}/#{shared_file}"
         end

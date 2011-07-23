@@ -10,12 +10,12 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :deploy_via,                :remote_cache
 
         set :scm,                         :git
-        set(:repository)                  {"git@github.com:#{github_account}/#{application}.git"}
+        set(:repository)                  { "git@github.com:#{github_account}/#{application}.git" }
         set(:branch)                      { `git branch`.match(/\* (\S+)\s/m)[1] || raise("Couldn't determine current branch") }
         set(:remote)                      { `git remote`.match(/(\S+)\s/m)[1] || raise("Couldn't determine default remote repository") }
         ssh_options[:forward_agent]       = true
 
-        set :vc_log,                      `git log #{previous_revision}..#{current_revision} --pretty=format:%ai:::%an:::%s`
+        set(:vc_log)                      { `git log #{previous_revision}..#{current_revision} --pretty=format:%ai:::%an:::%s` }
       end
     end
   end

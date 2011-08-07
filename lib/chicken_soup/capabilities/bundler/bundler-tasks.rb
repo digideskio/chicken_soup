@@ -9,7 +9,8 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :gems do
     desc "Install Bundled Gems"
     task :install, :roles => :app do
-      run "cd #{latest_release} && bundle install --gemfile #{latest_release}/Gemfile --path #{shared_path}/bundle --deployment --quiet --without development test"
+
+      run "cd #{latest_release} && bundle install --gemfile #{latest_release}/Gemfile --path #{shared_path}/bundle --deployment --without development test"
     end
 
     desc "Update Bundled Gems"

@@ -9,8 +9,9 @@ Capistrano::Configuration.instance(:must_exist).load do
       DESC
       task :rvm do
         required_variables = [
+          :rvmrc_file,
           :ruby_version,
-          :ruby_gemset,
+          :rvm_gemset,
           :rvm_ruby_string,
         ]
 

@@ -16,8 +16,12 @@
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   on      :start,                         'environment:variable:check',  :except => ['staging', 'production']
+  before  'deploy',                       'environment:deployment:check'
+  before  'deploy:cold',                  'environment:deployment:check'
+  before  'deploy:subzero',               'environment:deployment:check'
 
-  after   'environment:variable:check',   'capabilities:variable:check', 'notifiers:variable:check'
+  after   'environment:variable:check',   'capabilities:variable:check',    'notifiers:variable:check'
+  after   'environment:deployment:check', 'capabilities:deployment:check',  'notifiers:deployment:check'
 
   namespace :environment do
     namespace :variable do
@@ -32,6 +36,13 @@ Capistrano::Configuration.instance(:must_exist).load do
         ]
 
         verify_variables(required_variables)
+      end
+    end
+
+    namespace :deployment do
+      desc "[internal] Attempts to ensure the deployment will be successful prior to attempting it."
+      task :check do
+        # Empty
       end
     end
   end

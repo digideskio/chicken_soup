@@ -21,7 +21,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     namespace :backup do
       task :default, :roles => :db, :only => {:primary => true} do
-        run "cd #{current_path} && BACKUP_DIRECTORY=#{shared_path}/db_backups #{rake} db:backup"
+        run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
       end
 
 

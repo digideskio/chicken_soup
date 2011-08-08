@@ -10,7 +10,8 @@ Capistrano::Configuration.instance(:must_exist).load do
         DESC
         task :db do
           required_variables = [
-            :skip_backup_before_migration
+            :skip_backup_before_migration,
+            :db_backups_path
           ]
 
           verify_variables(required_variables)

@@ -23,8 +23,33 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :default, :roles => :db, :only => {:primary => true} do
         run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
       end
+    end
 
+    desc <<-DESC
+      Creates an easy way to debug remote data locally.
 
+      * Running this task will create a dump file of all the data in the specified
+        environment.
+      * Copy the dump file to the local machine
+      * Drop and recreate all local databases
+      * Import the dump file
+      * Bring the local DB up-to-date with any local migrations
+      * Prepare the test environment
+    DESC
+    namespace :pull do
+      task :default, :roles => :db, :only => {:primary => true} do
+        db.backup.default
+        db.pull.latest
+      end
+
+      task :latest, :roles => :db, :only => {:primary => true} do
+        latest_backup = capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp
+
+        download_compressed "#{db_backups_path}/#{latest_backup}", "#{rails_root}/tmp/#{latest_backup}", :once => true
+
+        `rake db:drop:all db:create:all`
+        `rails dbconsole development < #{rails_root}/tmp/#{latest_backup}`
+        `rake db:migrate db:test:prepare`
       end
     end
 

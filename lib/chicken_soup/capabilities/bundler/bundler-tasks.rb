@@ -18,6 +18,11 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       run "cd #{latest_release} && bundle update"
     end
+
+    desc "Remove Bundled Gems"
+    task :clean, :roles => :app do
+      run "rm -rf #{gem_packager_gem_path}/*"
+    end
   end
 
   namespace :bundler do

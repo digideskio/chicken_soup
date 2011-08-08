@@ -15,22 +15,35 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  on      :start,               'environment:check',    :except => ['staging', 'production']
+  on      :start,                         'environment:variable:check',  :except => ['staging', 'production']
+  before  'deploy',                       'environment:deployment:check'
+  before  'deploy:cold',                  'environment:deployment:check'
+  before  'deploy:subzero',               'environment:deployment:check'
 
-  after   'environment:check',  'capabilities:check', 'notifiers:check'
+  after   'environment:variable:check',   'capabilities:variable:check',    'notifiers:variable:check'
+  after   'environment:deployment:check', 'capabilities:deployment:check',  'notifiers:deployment:check'
 
   namespace :environment do
-    desc "[internal] Checks for environment variables shared among all deployment types."
-    task :check do
-      abort "You need to specify staging or production when you deploy. ie 'cap staging db:backup'" unless exists?(:rails_env)
-      abort "You need to specify a deployment type in your application's 'deploy.rb' file. ie 'set :deployment_type, :heroku'" unless exists?(:deployment_type)
+    namespace :variable do
+      desc "[internal] Checks for environment variables shared among all deployment types."
+      task :check do
+        abort "You need to specify staging or production when you deploy. ie 'cap staging db:backup'" unless exists?(:rails_env)
+        abort "You need to specify a deployment type in your application's 'deploy.rb' file. ie 'set :deployment_type, :heroku'" unless exists?(:deployment_type)
 
-      required_variables = [
-        :application,
-        :application_short
-      ]
+        required_variables = [
+          :application,
+          :application_short
+        ]
 
-      verify_variables(required_variables)
+        verify_variables(required_variables)
+      end
+    end
+
+    namespace :deployment do
+      desc "[internal] Attempts to ensure the deployment will be successful prior to attempting it."
+      task :check do
+        # Empty
+      end
     end
   end
 end

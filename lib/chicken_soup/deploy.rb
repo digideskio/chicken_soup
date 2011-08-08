@@ -37,6 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :subzero do
       transaction do
+        ruby.update
         deploy.base
       end
     end

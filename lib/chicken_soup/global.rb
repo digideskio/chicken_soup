@@ -120,3 +120,14 @@ end
 def require_if_exists(file)
   require file if File.exists?(File.join(File.dirname(__FILE__), '..', "#{file}.rb"))
 end
+
+def download_compressed(remote, local, options = {})
+  remote_compressed_filename = "#{remote}.bz2"
+  local_compressed_filename  = "#{local}.bz2"
+
+  run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"
+  download remote_compressed_filename, local_compressed_filename, options
+
+  run "rm -f #{remote_compressed_filename}"
+  `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
+end

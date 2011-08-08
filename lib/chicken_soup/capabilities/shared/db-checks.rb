@@ -17,5 +17,19 @@ Capistrano::Configuration.instance(:must_exist).load do
         end
       end
     end
+
+    namespace :deployment do
+      namespace :check do
+        desc <<-DESC
+          [internal] Checks to see if the DB is ready for deployment.
+        DESC
+        task :db, :roles => :db, :only => {:primary => true} do
+          backup_task_exists = capture("cd #{current_path} && #{rake} -T | grep db:backup | wc -l").chomp
+          abort("There must be a task named db:backup in order to deploy.  If you do not want to backup your DB during deployments, set the skip_backup_before_migration variable to true in your deploy.rb.") if backup_task_exists == '0'
+
+          run "if [ ! -d #{db_backups_path} ]; then mkdir #{db_backups_path}; fi"
+        end
+      end
+    end
   end
 end

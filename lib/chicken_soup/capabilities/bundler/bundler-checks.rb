@@ -10,7 +10,8 @@ Capistrano::Configuration.instance(:must_exist).load do
         DESC
         task :bundler do
           required_variables = [
-            :gem_packager_version
+            :gem_packager_version,
+            :gem_packager_gem_path
           ]
 
           verify_variables(required_variables)

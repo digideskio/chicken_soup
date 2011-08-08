@@ -9,8 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :gems do
     desc "Install Bundled Gems"
     task :install, :roles => :app do
-
-      run "cd #{latest_release} && bundle install --gemfile #{latest_release}/Gemfile --path #{shared_path}/bundle --deployment --without development test"
+      run_with_rvm rvm_ruby_string, "bundle install --gemfile #{latest_release}/Gemfile --path #{gem_packager_gem_path} --deployment --without development test"
     end
 
     desc "Update Bundled Gems"

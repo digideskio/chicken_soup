@@ -8,5 +8,14 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :load_tasks do
     end
+
+    desc <<-DESC
+      Disables all notifiers for the current deployment.
+
+      This task must be called prior to any of the `deploy` tasks.
+    DESC
+    task :disable do
+      set :notifiers,     []
+    end
   end
 end

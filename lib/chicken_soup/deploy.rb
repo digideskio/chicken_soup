@@ -24,9 +24,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :cold do
       transaction do
-        website.disable
         deploy.base
-        website.enable
       end
     end
 
@@ -39,9 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :subzero do
       transaction do
-        web_server.stop
         deploy.base
-        web_server.start
       end
     end
 

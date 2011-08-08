@@ -15,6 +15,12 @@ Capistrano::Configuration.instance(:must_exist).load do
   before    'deploy',                     'deploy:web:disable'
   after     'deploy',                     'deploy:web:enable'
 
+  before    'deploy:subzero',             'web_server:stop'
+  after     'deploy:subzero',             'web_server:start'
+
+  before    'deploy:cold',                'website:disable'
+  after     'deploy:cold',                'website:enable'
+
   namespace :deploy do
     namespace :web do
       desc <<-DESC

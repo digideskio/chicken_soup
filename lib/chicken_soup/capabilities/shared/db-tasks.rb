@@ -10,8 +10,6 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   before    "deploy:migrate",  "db:backup"        unless skip_backup_before_migration
 
-  before    'db:backup',       'db:backup:check'
-
   namespace :db do
     desc <<-DESC
       Calls the rake task `db:backup` on the server for the given environment.
@@ -23,15 +21,35 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     namespace :backup do
       task :default, :roles => :db, :only => {:primary => true} do
-        run "cd #{current_path} && BACKUP_DIRECTORY=#{shared_path}/db_backups #{rake} db:backup"
+        run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
+      end
+    end
+
+    desc <<-DESC
+      Creates an easy way to debug remote data locally.
+
+      * Running this task will create a dump file of all the data in the specified
+        environment.
+      * Copy the dump file to the local machine
+      * Drop and recreate all local databases
+      * Import the dump file
+      * Bring the local DB up-to-date with any local migrations
+      * Prepare the test environment
+    DESC
+    namespace :pull do
+      task :default, :roles => :db, :only => {:primary => true} do
+        db.backup.default
+        db.pull.latest
       end
 
-      desc "[internal] Used to check to see if the db:backup task exists on the server."
-      task :check, :roles => :db do
-        backup_task_exists = capture("cd #{current_path} && #{rake} -T | grep db:backup | wc -l").chomp
-        abort("There must be a task named db:backup in order to deploy.  If you do not want to backup your DB during deployments, set the skip_backup_before_migration variable to true in your deploy.rb.") if backup_task_exists == '0'
+      task :latest, :roles => :db, :only => {:primary => true} do
+        latest_backup = capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp
 
-        run "if [ ! -d #{shared_path}/db_backups ]; then mkdir #{shared_path}/db_backups; fi"
+        download_compressed "#{db_backups_path}/#{latest_backup}", "#{rails_root}/tmp/#{latest_backup}", :once => true
+
+        `rake db:drop:all db:create:all`
+        `rails dbconsole development < #{rails_root}/tmp/#{latest_backup}`
+        `rake db:migrate db:test:prepare`
       end
     end
 

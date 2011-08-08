@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :gems do
     desc "Install Bundled Gems"
     task :install, :roles => :app do
-      run "cd #{latest_release} && bundle install --gemfile #{latest_release}/Gemfile --path #{shared_path}/bundle --deployment --quiet --without development test"
+      run_with_rvm rvm_ruby_string, "bundle install --gemfile #{latest_release}/Gemfile --path #{gem_packager_gem_path} --deployment --without development test"
     end
 
     desc "Update Bundled Gems"
@@ -17,6 +17,11 @@ Capistrano::Configuration.instance(:must_exist).load do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
 
       run "cd #{latest_release} && bundle update"
+    end
+
+    desc "Remove Bundled Gems"
+    task :clean, :roles => :app do
+      run "rm -rf #{gem_packager_gem_path}/*"
     end
   end
 

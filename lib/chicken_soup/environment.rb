@@ -10,7 +10,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     desc "[internal] Load the Chicken Soup environment"
     task :init do
       environment.defaults.default
-      environment.check
+      environment.variable.check
       environment.load_tasks
     end
   end

@@ -15,6 +15,12 @@ Capistrano::Configuration.instance(:must_exist).load do
   before    'deploy',                     'deploy:web:disable'
   after     'deploy',                     'deploy:web:enable'
 
+  before    'deploy:subzero',             'web_server:stop'
+  after     'deploy:subzero',             'web_server:start'
+
+  before    'deploy:cold',                'website:disable'
+  after     'deploy:cold',                'website:enable'
+
   namespace :deploy do
     namespace :web do
       desc <<-DESC
@@ -78,22 +84,22 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :web_server do
     desc "Stop the web server"
     task :stop, :roles => :web do
-      run "#{sudo} #{web_server_control_script} stop"
+      run "#{sudo} #{web_server_control_script} stop", :pty => true
     end
 
     desc "Start the web server"
     task :start, :roles => :web do
-      run "#{sudo} #{web_server_control_script} start"
+      run "#{sudo} #{web_server_control_script} start", :pty => true
     end
 
     desc "Restart the web server"
     task :restart, :roles => :web do
-      run "#{sudo} #{web_server_control_script} restart"
+      run "#{sudo} #{web_server_control_script} restart", :pty => true
     end
 
     desc "Reloads the web server configuration"
     task :reload, :roles => :web do
-      run "#{sudo} #{web_server_control_script} reload"
+      run "#{sudo} #{web_server_control_script} reload", :pty => true
     end
   end
 end

@@ -1,11 +1,9 @@
-Chicken Soup... for the Deployment Soul
-================================
-![Chicken Soup](http://www.thekompanee.com/public_files/chicken-soup.png)
+![Chicken Soup... for the Deployer's Soul](http://www.thekompanee.com/public_files/chicken-soup.png)
 
 Even more opinionated than Capistrano itself, Chicken Soup adds a lot of useful tasks
 specifically for those who want to DRY up deploying their Rails applications.
 
-![Chicken Soup Meme](http://www.thekompanee.com/public_files/chicken-soup-meme.gif)
+![Chicken Soup Meme](http://www.thekompanee.com/public_files/chicken-soup-meme.png)
 
 Interface
 ------------------------

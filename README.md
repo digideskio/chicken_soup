@@ -21,6 +21,7 @@ comes with:
   * Bundler
   * Isolate (coming soon)
   * Git
+  * Github
   * Subversion (partial)
   * Passenger
   * Postgres

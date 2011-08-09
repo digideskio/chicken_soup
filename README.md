@@ -3,8 +3,6 @@
 Even more opinionated than Capistrano itself, Chicken Soup adds a lot of useful tasks
 specifically for those who want to DRY up deploying their Rails applications.
 
-![Chicken Soup Meme](http://www.thekompanee.com/public_files/chicken-soup-meme.png)
-
 Interface
 ------------------------
 Whether deploying to Heroku or your own servers, Chicken Soup gives you one command

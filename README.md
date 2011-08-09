@@ -1,7 +1,11 @@
 Chicken Soup... for the Deployment Soul
 ================================
+![Chicken Soup](http://www.thekompanee.com/public_files/chicken-soup.png)
+
 Even more opinionated than Capistrano itself, Chicken Soup adds a lot of useful tasks
 specifically for those who want to DRY up deploying their Rails applications.
+
+![Chicken Soup Meme](http://www.thekompanee.com/public_files/chicken-soup-meme.gif)
 
 Interface
 ------------------------
@@ -53,6 +57,9 @@ on the server.
 This will also modify your Capfile (or create it if you don't have one) and install a file in
 `lib/recipes/` which will load Chicken Soup when you invoke Capistrano.
 
+Finally, you'll get a deploy.rb template that will get you started with your Chicken Soup
+experience.
+
 Getting Started
 ------------------------
 Chicken Soup is all about sensible defaults.  Any of which can be overridden in your deploy.rb
@@ -78,6 +85,49 @@ will do the right thing.
 
 Wnat to migrate your application's DB automatically during deployment?  Add :mysql or :postgres to your
 capabilities list.
+
+How Does This Work?
+------------------------
+Well, that's what we mean by 'sensible defaults'.  Using the above configuration, Chicken Soup will infer
+certain things.  For example, it will look in your gitconfig file for either a github username or a git
+username.  If either of these are found, it will assume your source code can be retrieved from:
+
+    git://github.com/your_username/myapplication
+
+To figure out the server, it will assume you want to connect to:
+
+    staging.myapplication.com
+
+for staging.  And:
+
+    myapplication.com
+
+for production.
+
+Built-in Multistage Support
+------------------------
+Yes it's required.  It's what makes Chicken Soup 'opinionated'.  In your deploy.rb file, you'll want
+(if you want different settings in staging vs production) to create 2 tasks:
+
+  * :staging
+  * :production
+
+Each of these tasks will contain 'siloed' variables that will only be set when deploying to that
+environment.
+
+__Note: Yes, we know about the Capistrano multi-stage extension but found it not extensible enough or useful
+enough for us to reuse here.  We attempted to keep to the same API in order to make it easy for people to
+transition.__
+
+What Isn't Chicken Soup?
+------------------------
+Chicken Soup is __not__ a server management tool.  It is used for easing deployment woes. In other words,
+use it to `start`, `stop` and `restart` Nginx.  Not to __install__ Nginx.
+
+Making Your Own Chicken Soup
+------------------------
+We attempted to develop Chicken Soup to be as easy as possible to add new notifiers and capabilities to your
+deployments.  Redis, MongoDB, Isolate, Mercurial, they're all fair game.  So get Pull Requestin'!!
 
 Issues
 ------------------------

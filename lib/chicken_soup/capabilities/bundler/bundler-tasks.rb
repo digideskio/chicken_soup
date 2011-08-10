@@ -11,7 +11,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   namespace :gems do
     desc "Processes the file containing all of the gems that you want installed and installs them one-by-one."
     task :install, :roles => :app do
-      run_with_rvm rvm_ruby_string, "bundle install --gemfile #{latest_release}/Gemfile --path #{gem_packager_gem_path} --deployment --without development test"
+      run_with_ruby_manager full_ruby_environment_string, "bundle install --gemfile #{latest_release}/Gemfile --path #{gem_packager_gem_path} --deployment --without development test"
     end
 
     desc <<-DESC
@@ -37,11 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :install, :roles => :app do
       bundler_install_command = "gem install bundler --version #{gem_packager_version} --no-ri --no-rdoc && gem cleanup bundler"
 
-      if fetch(:capabilities).include? :rvm
-        run_with_rvm "#{ruby_version}@global", bundler_install_command
-      else
-        run bundler_install_command
-      end
+      run_with_ruby_manager "#{ruby_version}@global", bundler_install_command
     end
   end
 end

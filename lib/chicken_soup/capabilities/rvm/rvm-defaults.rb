@@ -16,12 +16,12 @@ Capistrano::Configuration.instance(:must_exist).load do
         contents.match(ChickenSoup::RVM_INFO_FORMAT)[2]
       end
 
-      _cset(:rvm_gemset)          do
+      _cset(:ruby_gemset)         do
         contents = File.read(rvmrc_file)
         contents.match(ChickenSoup::RVM_INFO_FORMAT)[3]
       end
 
-      _cset(:rvm_ruby_string)     {rvm_gemset ? "#{ruby_version}@#{rvm_gemset}" : ruby_version}
+      _cset(:full_ruby_environment_string)      {ruby_gemset ? "#{ruby_version}@#{ruby_gemset}" : ruby_version}
     end
   end
 end

@@ -161,4 +161,25 @@ module ChickenSoup
     run "rm -f #{remote_compressed_filename}"
     `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
   end
+
+  ###
+  # A stub method which simply passes through to Capistrano's #run.  This
+  # method is meant to be overridden when a Ruby manager capability (ie RVM)
+  # is installed.
+  #
+  # @param [String] ruby_version This is simply a noop on this method.  It
+  # is not used.  It is instead intended to be used with the Ruby manager
+  # that is installed.
+  #
+  # @param [String] command The command that is passed to #run
+  #
+  # @param [String] options Any options that can be passed to Capistrano's
+  # #run method.
+  #
+  # @example
+  #   run_with_ruby_manager 'foo', 'gem list', :pty => false
+  #
+  def run_with_ruby_manager(ruby_version, command, options = {})
+    run command, options
+  end
 end

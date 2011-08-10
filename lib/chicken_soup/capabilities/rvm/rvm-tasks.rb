@@ -2,8 +2,8 @@
 #                             RVM TASKS                              #
 ######################################################################
 module ChickenSoup
-  def run_with_rvm(ruby_env_string, command)
-    run("rvm use #{ruby_env_string} && #{command}")
+  def run_with_ruby_manager(ruby_env_string, command, options = {})
+    run "rvm use #{ruby_env_string} && #{command}", options
   end
 end
 

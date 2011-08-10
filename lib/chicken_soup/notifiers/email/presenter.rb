@@ -35,7 +35,7 @@ module ChickenSoup
       end
 
       def changes_since_last_deployment
-        @capistrano[:vc_log]
+        vc_log
       end
 
       private

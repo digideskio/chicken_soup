@@ -14,8 +14,8 @@ Capistrano::Configuration.instance(:must_exist).load do
           required_variables = [
             :rvmrc_file,
             :ruby_version,
-            :rvm_gemset,
-            :rvm_ruby_string,
+            :ruby_gemset,
+            :full_ruby_environment_string,
           ]
 
           verify_variables(required_variables)
@@ -32,7 +32,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           set :current_rvm_ruby_string, rvmrc_file_contents.match(ChickenSoup::RVM_INFO_FORMAT)[1]
 
           unless ruby_version_update_pending
-            abort "'#{rvm_ruby_string}' does not match the version currently installed on the server (#{current_rvm_ruby_string}).  Please run 'cap <environment> ruby:update deploy:subzero' if you would like to upgrade your Ruby version prior to deploying." unless current_rvm_ruby_string == rvm_ruby_string
+            abort "'#{full_ruby_environment_string}' does not match the version currently installed on the server (#{current_rvm_ruby_string}).  Please run 'cap <environment> ruby:update deploy:subzero' if you would like to upgrade your Ruby version prior to deploying." unless current_rvm_ruby_string == rvm_ruby_string
           end
         end
       end

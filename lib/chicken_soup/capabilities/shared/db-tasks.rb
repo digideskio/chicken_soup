@@ -10,6 +10,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   run_task  "db:create",       :as => manager_username
   run_task  "db:drop",         :as => manager_username
 
+  before    "deploy:cleanup",  "deploy:migrate"
   before    "deploy:migrate",  "db:backup"        unless skip_backup_before_migration
 
   namespace :db do

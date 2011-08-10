@@ -11,7 +11,6 @@ Capistrano::Configuration.instance(:must_exist).load do
         deploy.update
         deploy.shared_files.symlink
         gems.install
-        deploy.migrate
         deploy.cleanup
       end
     end

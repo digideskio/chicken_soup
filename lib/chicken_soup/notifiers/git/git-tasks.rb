@@ -1,6 +1,12 @@
 ######################################################################
 #                         GIT NOTIFIER TASKS                         #
 ######################################################################
+module ChickenSoup
+  def vc_log
+    `git log #{previous_revision}..#{current_revision} --pretty=format:%ai:::%an:::%s`
+  end
+end
+
 Capistrano::Configuration.instance(:must_exist).load do
   after     'deploy:cleanup',           'notify:via_git:tag'
 

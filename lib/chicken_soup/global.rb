@@ -183,3 +183,7 @@ module ChickenSoup
     run command, options
   end
 end
+
+def vc_log
+  nil
+end

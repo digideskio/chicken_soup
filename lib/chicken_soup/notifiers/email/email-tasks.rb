@@ -4,13 +4,13 @@
 require 'mail'
 
 Capistrano::Configuration.instance(:must_exist).load do |cap|
-  after     'deploy:cleanup',             'notify:by_email'
+  after     'deploy:cleanup',             'notify:via_email'
 
   namespace :notify do
     desc <<-DESC
       [internal] Sends a notification via email once a deployment is complete.
     DESC
-    task :by_email do
+    task :via_email do
       Mail.defaults do
         delivery_method cap[:email_notifier_mail_method], cap[:email_notifier_mail_options]
       end

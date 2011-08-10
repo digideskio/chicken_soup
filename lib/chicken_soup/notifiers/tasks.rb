@@ -16,6 +16,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :disable do
       set :notifiers,     []
+      callbacks[:after].delete_if {|c| c.source =~ /^notify:/}
     end
   end
 end

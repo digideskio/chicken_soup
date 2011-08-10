@@ -125,7 +125,7 @@ module ChickenSoup
   # @param [String] file The filename (optionally including path), directory,
   #   or symlink that is may or may not exist.
   #
-  # @return nil nil will be returned if the file was loaded successfully.
+  # @return [nil] nil will be returned if the file was loaded successfully.
   #
   # @example
   #   require_if_exists 'my_library'
@@ -182,8 +182,17 @@ module ChickenSoup
   def run_with_ruby_manager(ruby_version, command, options = {})
     run command, options
   end
-end
 
-def vc_log
-  nil
+  ###
+  # A stub method which simply returns nil.  It is meant to be overridden
+  # when a version control capability (ie Git) is installed.
+  #
+  # @return [nil] Always returns nil
+  #
+  # @example
+  #   run_with_ruby_manager 'foo', 'gem list', :pty => false
+  #
+  def vc_log
+    nil
+  end
 end

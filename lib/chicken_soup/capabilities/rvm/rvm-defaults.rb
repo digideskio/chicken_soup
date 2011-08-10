@@ -1,7 +1,7 @@
 ######################################################################
 #                           RVM DEFAULTS                             #
 ######################################################################
-ChickenSoup::RVM_INFO_FORMAT = /^rvm.+\s(([a-zA-Z0-9\-\._]+)(?:@([a-zA-Z0-9\-\._]+))?)/
+::ChickenSoup::RVM_INFO_FORMAT = /^rvm.+\s(([a-zA-Z0-9\-\._]+)(?:@([a-zA-Z0-9\-\._]+))?)/
 
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :capabilities do

@@ -14,8 +14,7 @@ Capistrano::Configuration.instance(:must_exist).load do
             :email_notifier_internal_recipients,
             :email_notifier_domain,
             :email_notifier_username,
-            :email_notifier_password,
-            :vc_log
+            :email_notifier_password
           ]
 
           abort "You must specify either internal or client recipients in order to use the email notifier." if email_notifier_client_recipients.empty? && email_notifier_internal_recipients.empty?

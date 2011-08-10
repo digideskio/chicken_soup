@@ -131,3 +131,7 @@ def download_compressed(remote, local, options = {})
   run "rm -f #{remote_compressed_filename}"
   `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
 end
+
+def vc_log
+  nil
+end

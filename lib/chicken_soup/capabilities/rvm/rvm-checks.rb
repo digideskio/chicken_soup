@@ -2,6 +2,8 @@
 #                             RVM CHECKS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   namespace :capabilities do
     namespace :variable do
       namespace :check do

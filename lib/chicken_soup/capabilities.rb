@@ -14,9 +14,11 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   require 'chicken_soup/capabilities/defaults'
-  require "chicken_soup/capabilities/checks"
-  require "chicken_soup/capabilities/tasks"
+  require 'chicken_soup/capabilities/checks'
+  require 'chicken_soup/capabilities/tasks'
 
   ['defaults', 'checks', 'tasks'].each do |method|
     desc "[internal] This task is only here because `require` cannot be used within a `namespace`"

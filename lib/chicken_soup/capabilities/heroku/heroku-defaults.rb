@@ -2,6 +2,8 @@
 #                           HEROKU DEFAULTS                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   namespace :capabilities do
     namespace :defaults do
       desc "[internal] Sets intelligent defaults for Heroku deployments"

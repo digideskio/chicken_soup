@@ -18,6 +18,8 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 

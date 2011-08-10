@@ -2,6 +2,8 @@
 #                          COMMON DB TASKS                           #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   _cset(:db_root_password)    {Capistrano::CLI.password_prompt("Root Password For DB: ")}
   _cset(:db_app_password)     {Capistrano::CLI.password_prompt("App Password For DB: ")}
 

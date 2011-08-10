@@ -4,6 +4,8 @@
 ::ChickenSoup::RVM_INFO_FORMAT = /^rvm.+\s(([a-zA-Z0-9\-\._]+)(?:@([a-zA-Z0-9\-\._]+))?)/
 
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   namespace :capabilities do
     namespace :defaults do
       _cset :rvmrc_file,                    File.join(rails_root, '.rvmrc')

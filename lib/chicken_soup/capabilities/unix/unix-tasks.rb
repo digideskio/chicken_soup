@@ -22,8 +22,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         If it finds it, it will upload the file or directory to the shared directory on
         the server and rename it to the proper file name.
 
-        If it doesn't find it, it will check to see if the remote file exists, if not,
-        it will use whatever local file is available with that name.
+        If it doesn't find it, it will check to see if the remote file exists.
 
         As a last resort, it will error out because the symlink task which follows will
         fail due to the missing file.
@@ -36,18 +35,14 @@ Capistrano::Configuration.instance(:must_exist).load do
           run "mkdir -p '#{shared_path}/#{base_dir_of_shared_file}'"
 
           remote_shared_file              = "#{shared_path}/#{shared_file}"
-          local_shared_file               = "#{Dir.pwd}/#{shared_file}"
+          local_shared_file               = "#{rails_root}/#{shared_file}"
           local_environment_specific_file = "#{local_shared_file}.#{rails_env}"
           permissions                     = File.directory? local_shared_file ? "755" : "600"
 
           if File.exists?(local_environment_specific_file)
             top.upload(local_environment_specific_file, remote_shared_file, :mode => permissions)
           elsif !remote_file_exists?(remote_shared_file)
-            if File.exists?(local_shared_file)
-              top.upload(local_shared_file, remote_shared_file, :mode => permissions)
-            else
-              abort "I'm sorry Dave, but I couldn't find a local file or directory at '#{local_shared_file}' or '#{local_environment_specific_file}'"
-            end
+            abort "I'm sorry Dave, but I couldn't find a local file or directory at '#{local_environment_specific_file}' or on the remote server at '#{remote_shared_file}'"
           end
         end
       end

@@ -19,16 +19,16 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :deploy_site_name,      domain
         set   :deploy_to,             "#{deploy_base_dir}/#{deploy_site_name}"
 
-        _cset :app_server_ip,         default_server_ip
-        _cset :web_server_ip,         default_server_ip
-        _cset :db_server_ip,          default_server_ip
-
         _cset :default_server_name,   domain
+        _cset(:default_server_ip)     { lookup_ip_for default_server_name }
 
         _cset(:app_server_name)       { default_server_name }
         _cset(:web_server_name)       { default_server_name }
         _cset(:db_server_name)        { default_server_name }
 
+        _cset(:app_server_ip)         { lookup_ip_for app_server_name }
+        _cset(:web_server_ip)         { lookup_ip_for web_server_name }
+        _cset(:db_server_ip)          { lookup_ip_for db_server_name  }
 
         # Evidently roles can't be assigned in a namespace :-/
         set_unix_server_roles

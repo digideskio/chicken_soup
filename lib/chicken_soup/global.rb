@@ -195,4 +195,9 @@ module ChickenSoup
   def vc_log
     nil
   end
+
+  def lookup_ip_for(hostname)
+    ip = `nslookup #{hostname} | tail -n 2 | head -n 1 | cut -d ' ' -f 2`.chomp
+    ip != '' ? ip : nil
+  end
 end

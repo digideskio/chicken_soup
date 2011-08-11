@@ -8,7 +8,7 @@ module ChickenSoup
 end
 
 Capistrano::Configuration.instance(:must_exist).load do
-  after     'deploy',             'notify:via_git:tag'
+  after     'deploy:base',        'notify:via_git:tag'
 
   namespace :notify do
     namespace :via_git do

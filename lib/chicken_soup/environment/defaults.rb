@@ -53,7 +53,6 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         _cset :notifiers,                 []
 
-        _cset(:application_short)         {application}
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
       end
     end

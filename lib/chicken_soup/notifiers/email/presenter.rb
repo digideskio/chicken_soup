@@ -3,6 +3,8 @@ require 'time'
 module ChickenSoup
   module Email
     class Presenter
+      include ChickenSoup
+
       LongDateFormat = "%A, %B %e, %Y at %l:%M%p %Z"
 
       def initialize(capistrano)

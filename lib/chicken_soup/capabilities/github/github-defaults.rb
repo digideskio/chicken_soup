@@ -10,10 +10,12 @@ Capistrano::Configuration.instance(:must_exist).load do
     namespace :defaults do
       desc "[internal] Sets defaults for deployments from Github"
       task :github do
-        _cset :github_account,            local_user
+        gitconfig_github_user             = `git config --get github.user`.chomp
+
+        _cset :github_account,            gitconfig_github_user != '' ? gitconfig_github_user : local_user
         _cset :github_repository,         application
 
-        set :github_url,                  "https://github.com/#{github_account}/#{github_repository}/tree/#{current_revision}"
+        set :github_url,                  "https://github.com/#{github_account}/#{github_repository}"
         set(:repository)                  { "git@github.com:#{github_account}/#{github_repository}.git" }
       end
     end

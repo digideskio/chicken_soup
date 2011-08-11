@@ -6,7 +6,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     namespace :defaults do
       desc "[internal] Sets intelligent version control defaults for deployments"
       task :git do
-        _cset :github_account,            ENV["USER"]
+        _cset :github_account,            local_user
         _cset :deploy_via,                :remote_cache
 
         set :scm,                         :git

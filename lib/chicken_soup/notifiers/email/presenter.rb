@@ -1,4 +1,3 @@
-require 'etc'
 require 'time'
 
 module ChickenSoup
@@ -19,7 +18,7 @@ module ChickenSoup
       end
 
       def deployed_by
-        Etc.getlogin
+        @capistrano[:local_user]
       end
 
       def deploy_date_in_long_format

@@ -2,7 +2,7 @@
 #                       AIRBRAKE NOTIFIER TASKS                      #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  after "deploy",            "notify:via_airbrake"
+  after 'deploy:base',       'notify:via_airbrake'
 
   namespace :notify do
     desc <<-DESC

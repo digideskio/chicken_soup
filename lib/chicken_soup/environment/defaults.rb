@@ -32,11 +32,15 @@ Capistrano::Configuration.instance(:must_exist).load do
       desc "[internal] Used to set up the intelligent staging defaults we like for our projects"
       task :staging do
         set :rails_env,                 'staging'
+
+        _cset(:domain)                  { "staging.#{application}.com" }
       end
 
       desc "[internal] Used to set up the intelligent production defaults we like for our projects"
       task :production do
         set :rails_env,                 'production'
+
+        _cset(:domain)                  { "#{application}.com" }
       end
 
       desc "[internal] Sets intelligent common defaults for deployments"

@@ -16,20 +16,28 @@ Capistrano::Configuration.instance(:must_exist).load do |cap|
       end
 
       if !cap[:email_notifier_client_recipients].empty?
-        Mail.deliver do
-              to cap[:email_notifier_client_recipients]
-            from cap[:email_notifier_sender]
-         subject cap[:email_notifier_subject]
-            body cap[:email_notifier_client_body]
+        begin
+          Mail.deliver do
+                to cap[:email_notifier_client_recipients]
+              from cap[:email_notifier_sender]
+          subject cap[:email_notifier_subject]
+              body cap[:email_notifier_client_body]
+          end
+        rescue
+          puts "I'm sorry Dave, but I couldn't contact the mail server.  The client email notifications you requested have not been sent"
         end
       end
 
       if !cap[:email_notifier_internal_recipients].empty?
-        Mail.deliver do
-              to cap[:email_notifier_internal_recipients]
-            from cap[:email_notifier_sender]
-         subject cap[:email_notifier_subject]
-            body cap[:email_notifier_internal_body]
+        begin
+          Mail.deliver do
+                to cap[:email_notifier_internal_recipients]
+              from cap[:email_notifier_sender]
+          subject cap[:email_notifier_subject]
+              body cap[:email_notifier_internal_body]
+          end
+        rescue
+          puts "I'm sorry Dave, but I couldn't contact the mail server.  The email notifications to the development team you requested have not been sent"
         end
       end
     end

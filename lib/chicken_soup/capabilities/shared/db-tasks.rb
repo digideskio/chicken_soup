@@ -2,12 +2,15 @@
 #                          COMMON DB TASKS                           #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   _cset(:db_root_password)    {Capistrano::CLI.password_prompt("Root Password For DB: ")}
   _cset(:db_app_password)     {Capistrano::CLI.password_prompt("App Password For DB: ")}
 
   run_task  "db:create",       :as => manager_username
   run_task  "db:drop",         :as => manager_username
 
+  before    "deploy:cleanup",  "deploy:migrate"
   before    "deploy:migrate",  "db:backup"        unless skip_backup_before_migration
 
   namespace :db do
@@ -25,23 +28,26 @@ Capistrano::Configuration.instance(:must_exist).load do
       end
     end
 
-    desc <<-DESC
-      Creates an easy way to debug remote data locally.
-
-      * Running this task will create a dump file of all the data in the specified
-        environment.
-      * Copy the dump file to the local machine
-      * Drop and recreate all local databases
-      * Import the dump file
-      * Bring the local DB up-to-date with any local migrations
-      * Prepare the test environment
-    DESC
     namespace :pull do
+      desc <<-DESC
+        Creates an easy way to debug remote data locally.
+
+        * Running this task will create a dump file of all the data in the specified
+          environment.
+        * Copy the dump file to the local machine
+        * Drop and recreate all local databases
+        * Import the dump file
+        * Bring the local DB up-to-date with any local migrations
+        * Prepare the test environment
+      DESC
       task :default, :roles => :db, :only => {:primary => true} do
         db.backup.default
         db.pull.latest
       end
 
+      desc <<-DESC
+        Just like `db:pull` but doesn't create a new backup first.
+      DESC
       task :latest, :roles => :db, :only => {:primary => true} do
         latest_backup = capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp
 

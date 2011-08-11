@@ -17,7 +17,11 @@
 # The latter should be set in the application's deploy.rb file.
 #
 ######################################################################
+require 'etc'
+
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
@@ -37,6 +41,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
       desc "[internal] Sets intelligent common defaults for deployments"
       task :default do
+        _cset :local_user,                Etc.getlogin
         _cset :use_sudo,                  false
         _cset :default_shell,             false
 

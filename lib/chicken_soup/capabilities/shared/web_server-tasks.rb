@@ -2,6 +2,8 @@
 #                    COMMON WEB SERVER TASKS                         #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   run_task  'web_server:stop',            :as => manager_username
   run_task  'web_server:start',           :as => manager_username
   run_task  'web_server:restart',         :as => manager_username

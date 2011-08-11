@@ -1,11 +1,15 @@
 ######################################################################
 #                             RVM TASKS                              #
 ######################################################################
-def run_with_rvm(ruby_env_string, command)
-  run("rvm use #{ruby_env_string} && #{command}")
+module ChickenSoup
+  def run_with_ruby_manager(ruby_env_string, command, options = {})
+    run "rvm use #{ruby_env_string} && #{command}", options
+  end
 end
 
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   run_task 'ruby:update', :as => manager_username
 
   namespace :ruby do
@@ -23,8 +27,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         set     :ruby_version_update_pending,   false
 
-        run("rvm use --create #{rvm_ruby_string}")
-        run("rvm wrapper #{rvm_ruby_string} #{application_server_type}")
+        run("rvm use --create #{full_ruby_environment_string}")
+        run("rvm wrapper #{full_ruby_environment_string} #{application_server_type}")
       else
         set     :ruby_version_update_pending,   true
       end

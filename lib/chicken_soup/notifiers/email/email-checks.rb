@@ -2,6 +2,8 @@
 #                       EMAIL NOTIFIER CHECKS                        #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  extend ChickenSoup
+
   namespace :notifiers do
     namespace :variable do
       namespace :check do

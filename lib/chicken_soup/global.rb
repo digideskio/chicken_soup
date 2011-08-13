@@ -163,6 +163,22 @@ module ChickenSoup
   end
 
   ###
+  # Checks to see if a filename has an extension which would imply that
+  # it is compressed.
+  #
+  # @param [String] filename The filename whose extension will be checked.
+  #
+  # @return [Boolean] the result of whether the file has a compression
+  # extension.
+  #
+  # @example
+  #   compressed_file? 'file.bz2'
+  #
+  def compressed_file?(filename)
+    filename =~ /.*\.bz2/
+  end
+
+  ###
   # A stub method which simply passes through to Capistrano's #run.  This
   # method is meant to be overridden when a Ruby manager capability (ie RVM)
   # is installed.

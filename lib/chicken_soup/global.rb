@@ -196,6 +196,19 @@ module ChickenSoup
     nil
   end
 
+  ###
+  # Uses nslookup locally to figure out the IP address of the provided
+  # hostname.
+  #
+  # @param [String] hostname The hostname you would like to retrieve the
+  # IP for.
+  #
+  # @return [String] The IP address of the provided hostname.  If no
+  # IP can be retrieved, nil will be returned.
+  #
+  # @example
+  #   lookup_ip_for 'google.com'
+  #
   def lookup_ip_for(hostname)
     ip = `nslookup #{hostname} | tail -n 2 | head -n 1 | cut -d ' ' -f 2`.chomp
     ip != '' ? ip : nil

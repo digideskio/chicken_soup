@@ -11,18 +11,18 @@ Capistrano::Configuration.instance(:must_exist).load do
   run_task  "db:drop",         :as => manager_username
 
   before    "deploy:cleanup",  "deploy:migrate"
-  before    "deploy:migrate",  "db:backup"        unless skip_backup_before_migration
+  before    "deploy:migrate",  "db:backup"            unless skip_backup_before_migration
 
-  namespace :db do
-    desc <<-DESC
-      Calls the rake task `db:backup` on the server for the given environment.
 
-      * The backup file is placed in a directory called `db_backups` under the `shared`
-        directory by default.
-      * The filenames are formatted with the timestamp of the backup.
-      * After export, each file is zipped up using a bzip2 compression format.
-    DESC
     namespace :backup do
+      desc <<-DESC
+        Calls the rake task `db:backup` on the server for the given environment.
+
+        * The backup file is placed in a directory called `db_backups` under the `shared`
+          directory by default.
+        * The filenames are formatted with the timestamp of the backup.
+        * After export, each file is zipped up using a bzip2 compression format.
+      DESC
       task :default, :roles => :db, :only => {:primary => true} do
         run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
       end

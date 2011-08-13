@@ -49,12 +49,10 @@ Capistrano::Configuration.instance(:must_exist).load do
         Just like `db:pull` but doesn't create a new backup first.
       DESC
       task :latest, :roles => :db, :only => {:primary => true} do
-        latest_backup = capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp
-
-        download_compressed "#{db_backups_path}/#{latest_backup}", "#{rails_root}/tmp/#{latest_backup}", :once => true
+        download_compressed "#{db_backups_path}/#{latest_db_backup_file}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
 
         `rake db:drop:all db:create:all`
-        `rails dbconsole development < #{rails_root}/tmp/#{latest_backup}`
+        `rails dbconsole development < #{rails_root}/tmp/#{latest_db_backup_file}`
         `rake db:migrate db:test:prepare`
       end
     end

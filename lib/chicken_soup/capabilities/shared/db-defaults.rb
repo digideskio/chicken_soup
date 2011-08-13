@@ -13,6 +13,8 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :db_backups_path,               "#{shared_path}/db_backups"
         _cset :db_backup_file_extension,      "dump.sql"
 
+        set(:latest_db_backup_file)           {capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp}
+
       end
     end
   end

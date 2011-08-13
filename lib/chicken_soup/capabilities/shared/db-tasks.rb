@@ -24,7 +24,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         * After export, each file is zipped up using a bzip2 compression format.
       DESC
       task :default, :roles => :db, :only => {:primary => true} do
-        run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
+        run %Q{cd #{current_path} && BACKUP_DIRECTORY="#{db_backups_path}" BACKUP_FILE="#{current_release}" BACKUP_FILE_EXTENSION="#{db_backup_file_extension}" #{rake} db:backup}
       end
     end
 

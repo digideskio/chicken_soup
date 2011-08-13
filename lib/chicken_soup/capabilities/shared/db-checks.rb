@@ -15,6 +15,7 @@ Capistrano::Configuration.instance(:must_exist).load do
             :skip_backup_before_migration,
             :db_backups_path,
             :db_backup_file_extension,
+            :autocompress_db_backups,
           ]
 
           verify_variables(required_variables)

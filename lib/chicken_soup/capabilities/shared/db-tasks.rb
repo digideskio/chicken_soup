@@ -13,7 +13,9 @@ Capistrano::Configuration.instance(:must_exist).load do
   before    "deploy:cleanup",  "deploy:migrate"
   before    "deploy:migrate",  "db:backup"            unless skip_backup_before_migration
 
+  after     "db:backup",       "db:backup:compress"   if autocompress_db_backups
 
+  namespace :db do
     namespace :backup do
       desc <<-DESC
         Calls the rake task `db:backup` on the server for the given environment.
@@ -25,6 +27,15 @@ Capistrano::Configuration.instance(:must_exist).load do
       DESC
       task :default, :roles => :db, :only => {:primary => true} do
         run %Q{cd #{current_path} && BACKUP_DIRECTORY="#{db_backups_path}" BACKUP_FILE="#{current_release}" BACKUP_FILE_EXTENSION="#{db_backup_file_extension}" #{rake} db:backup}
+      end
+
+      desc <<-DESC
+        Compresses the most recent backup if it isn't already compressed.
+
+        The compression format is bzip2.
+      DESC
+      task :compress, :roles => :db, :only => {:primary => true} do
+        run "bzip2 -zvck9 #{latest_db_backup_file} > #{latest_db_backup_file}.bz2" unless compressed_file?(latest_db_backup_file)
       end
     end
 

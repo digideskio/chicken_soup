@@ -164,7 +164,7 @@ module ChickenSoup
 
     download remote_compressed_filename, local_compressed_filename, options
 
-    run "rm -f #{remote_compressed_filename}"
+    run "rm -f #{remote_compressed_filename}" unless remote_compressed_filename == remote
     `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
   end
 

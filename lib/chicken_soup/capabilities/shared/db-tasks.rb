@@ -41,6 +41,19 @@ Capistrano::Configuration.instance(:must_exist).load do
         end
 
         desc <<-DESC
+          Compresses any uncompressed DB backups to help save space.
+
+          The compression format is bzip2.
+        DESC
+        task :all, :roles => :db, :only => {:primary => true} do
+          uncompressed_backup_files = capture("ls #{db_backups_path}/*.#{db_backup_file_extension} -1t").chomp.split("\n")
+
+          uncompressed_backup_files.each do |file|
+            run "bzip2 -zvck9 #{uncompressed_backup_files} > #{uncompressed_backup_files}.bz2 && rm -f #{uncompressed_backup_files}"
+          end
+        end
+
+        desc <<-DESC
           If the user has decided they would like to limit the number of db backups
           that can exist on the system, this task is called to clean up any files
           which are over that limit.

@@ -16,6 +16,8 @@ Capistrano::Configuration.instance(:must_exist).load do
             :db_backups_path,
             :db_backup_file_extension,
             :autocompress_db_backups,
+            :limit_db_backups,
+            :total_db_backup_limit
           ]
 
           verify_variables(required_variables)

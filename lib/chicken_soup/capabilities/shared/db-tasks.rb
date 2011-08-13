@@ -14,6 +14,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   before    "deploy:migrate",  "db:backup"            unless skip_backup_before_migration
 
   after     "db:backup",       "db:backup:compress"   if autocompress_db_backups
+  after     "db:backup",       "db:backup:cleanup"    if limit_db_backups
 
   namespace :db do
     namespace :backup do
@@ -36,6 +37,25 @@ Capistrano::Configuration.instance(:must_exist).load do
       DESC
       task :compress, :roles => :db, :only => {:primary => true} do
         run "bzip2 -zvck9 #{latest_db_backup_file} > #{latest_db_backup_file}.bz2" unless compressed_file?(latest_db_backup_file)
+      end
+
+      desc <<-DESC
+        If the user has decided they would like to limit the number of db backups
+        that can exist on the system, this task is called to clean up any files
+        which are over that limit.
+
+        The oldest files are cleaned up first.
+      DESC
+      task :cleanup, :roles => :db, :only => {:primary => true} do
+        number_of_backups = capture('ls -l | wc -l').chomp.to_i
+
+        if number_of_backups > total_db_backup_limit
+          backup_files_to_remove = capture("ls #{db_backups_path} -1t | tail -n #{number_of_backups - db_backups_to_keep}").chomp.split("\n")
+
+          backup_files_to_remove.each do |file|
+            run "rm -f #{db_backups_path}/#{file}"
+          end
+        end
       end
     end
 

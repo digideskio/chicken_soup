@@ -17,6 +17,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         set(:latest_db_backup_file)           {capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp}
 
+        _cset :limit_db_backups,              true
+        _cset :total_db_backup_limit,         100
       end
     end
   end

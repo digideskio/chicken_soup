@@ -49,7 +49,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           uncompressed_backup_files = capture("ls #{db_backups_path}/*.#{db_backup_file_extension} -1t").chomp.split("\n")
 
           uncompressed_backup_files.each do |file|
-            run "bzip2 -zvck9 #{uncompressed_backup_files} > #{uncompressed_backup_files}.bz2 && rm -f #{uncompressed_backup_files}"
+            run "bzip2 -zvck9 #{file} > #{file}.bz2 && rm -f #{file}"
           end
         end
 
@@ -64,10 +64,10 @@ Capistrano::Configuration.instance(:must_exist).load do
           number_of_backups = capture('ls -l | wc -l').chomp.to_i
 
           if number_of_backups > total_db_backup_limit
-            backup_files_to_remove = capture("ls #{db_backups_path} -1t | tail -n #{number_of_backups - db_backups_to_keep}").chomp.split("\n")
+            backup_files_to_remove = capture("ls #{db_backups_path}/* -1t | tail -n #{number_of_backups - db_backups_to_keep}").chomp.split("\n")
 
             backup_files_to_remove.each do |file|
-              run "rm -f #{db_backups_path}/#{file}"
+              run "rm -f #{file}"
             end
           end
         end

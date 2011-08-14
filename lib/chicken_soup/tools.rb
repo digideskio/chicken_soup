@@ -2,8 +2,6 @@
 #                           TOOLS SETUP                              #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   require "chicken_soup/tools/tasks"
 
   ['defaults', 'checks', 'tasks'].each do |method|

@@ -12,7 +12,6 @@ module ChickenSoup
 end
 
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
 
   namespace :capabilities do
     namespace :defaults do

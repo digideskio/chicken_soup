@@ -2,8 +2,6 @@
 #                           NOTIFIERS SETUP                          #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   require 'chicken_soup/notifiers/defaults'
   require "chicken_soup/notifiers/checks"
   require "chicken_soup/notifiers/tasks"

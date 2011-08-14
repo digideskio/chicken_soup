@@ -56,6 +56,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :global_shared_elements,    ["config/database.yml"]
 
         _cset :notifiers,                 []
+        _cset :tools,                     [:log]
 
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
 

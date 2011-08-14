@@ -37,7 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           The compression format is bzip2.
         DESC
         task :default, :roles => :db, :only => {:primary => true} do
-          run "bzip2 -zvck9 #{latest_db_backup_file} > #{latest_db_backup_file}.bz2" unless compressed_file?(latest_db_backup_file)
+          run "bzip2 -zvck9 #{latest_db_backup} > #{latest_db_backup}.bz2" unless compressed_file?(latest_db_backup)
         end
 
         desc <<-DESC
@@ -95,7 +95,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         Just like `db:pull` but doesn't create a new backup first.
       DESC
       task :latest, :roles => :db, :only => {:primary => true} do
-        download_compressed "#{db_backups_path}/#{latest_db_backup_file}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
+        download_compressed "#{latest_db_backup}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
 
         `rake db:drop:all db:create:all`
         `rails dbconsole development < #{rails_root}/tmp/#{latest_db_backup_file}`

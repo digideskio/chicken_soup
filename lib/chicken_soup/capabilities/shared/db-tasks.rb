@@ -61,7 +61,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           The oldest files are cleaned up first.
         DESC
         task :cleanup, :roles => :db, :only => {:primary => true} do
-          number_of_backups = capture('ls -l | wc -l').chomp.to_i
+          number_of_backups = capture("ls #{db_backups_path} -1 | wc -l").chomp.to_i
 
           if number_of_backups > total_db_backup_limit
             backup_files_to_remove = capture("ls #{db_backups_path}/* -1t | tail -n #{number_of_backups - db_backups_to_keep}").chomp.split("\n")

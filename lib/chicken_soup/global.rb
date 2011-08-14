@@ -115,7 +115,13 @@ module ChickenSoup
   #   remote_file_exists? '/var/www/myappdir/current'
   #
   def remote_file_exists?(file)
-    capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == "exists"
+    capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == 'exists'
+  end
+
+  def remote_directory_exists?(directory, options = {})
+    with_files_check = options[:with_files] ? "&& $(ls -A #{directory})" : ''
+
+    capture("if [[ -d #{directory} #{with_files_check} ]]; then echo 'exists'; fi") == 'exists'
   end
 
   ###

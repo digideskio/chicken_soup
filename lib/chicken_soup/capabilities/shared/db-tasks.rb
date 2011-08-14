@@ -30,6 +30,25 @@ Capistrano::Configuration.instance(:must_exist).load do
         run %Q{cd #{current_path} && BACKUP_DIRECTORY="#{db_backups_path}" BACKUP_FILE="#{release_name}" BACKUP_FILE_EXTENSION="#{db_backup_file_extension}" #{rake} db:backup}
       end
 
+      desc <<-DESC
+        If the user has decided they would like to limit the number of db backups
+        that can exist on the system, this task is called to clean up any files
+        which are over that limit.
+
+        The oldest files are cleaned up first.
+      DESC
+      task :cleanup, :roles => :db, :only => {:primary => true} do
+        number_of_backups = capture("ls #{db_backups_path} -1 | wc -l").chomp.to_i
+
+        if number_of_backups > total_db_backup_limit
+          backup_files_to_remove = capture("ls #{db_backups_path}/* -1t | tail -n #{number_of_backups - total_db_backup_limit}").chomp.split("\n")
+
+          backup_files_to_remove.each do |file|
+            run "rm -f #{file}"
+          end
+        end
+      end
+
       namespace :compress do
         desc <<-DESC
           Compresses the most recent backup if it isn't already compressed.
@@ -50,25 +69,6 @@ Capistrano::Configuration.instance(:must_exist).load do
 
           uncompressed_backup_files.each do |file|
             run "bzip2 -zvck9 #{file} > #{file}.bz2 && rm -f #{file}"
-          end
-        end
-      end
-
-      desc <<-DESC
-        If the user has decided they would like to limit the number of db backups
-        that can exist on the system, this task is called to clean up any files
-        which are over that limit.
-
-        The oldest files are cleaned up first.
-      DESC
-      task :cleanup, :roles => :db, :only => {:primary => true} do
-        number_of_backups = capture("ls #{db_backups_path} -1 | wc -l").chomp.to_i
-
-        if number_of_backups > total_db_backup_limit
-          backup_files_to_remove = capture("ls #{db_backups_path}/* -1t | tail -n #{number_of_backups - total_db_backup_limit}").chomp.split("\n")
-
-          backup_files_to_remove.each do |file|
-            run "rm -f #{file}"
           end
         end
       end

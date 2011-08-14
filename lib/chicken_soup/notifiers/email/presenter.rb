@@ -24,11 +24,11 @@ module ChickenSoup
       end
 
       def deploy_date_in_long_format
-        format_timestamp(@capistrano[:current_release], LongDateFormat)
+        format_timestamp(@capistrano[:latest_release_name], LongDateFormat)
       end
 
       def previous_deploy_date_in_long_format
-        format_timestamp(@capistrano[:previous_release], LongDateFormat)
+        format_timestamp(@capistrano[:previous_release_name], LongDateFormat)
       end
 
       def notifiers

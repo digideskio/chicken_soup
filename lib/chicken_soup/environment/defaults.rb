@@ -58,6 +58,9 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :notifiers,                 []
 
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
+
+        _cset(:latest_release_name)       {exists?(:deploy_timestamped) ? release_name : releases.last}
+        _cset(:previous_release_name)     {releases.length > 1 ? releases[-2] : nil}
       end
     end
   end

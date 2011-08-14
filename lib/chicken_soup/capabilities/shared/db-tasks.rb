@@ -46,7 +46,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           The compression format is bzip2.
         DESC
         task :all, :roles => :db, :only => {:primary => true} do
-          uncompressed_backup_files = capture("ls #{db_backups_path}/*.#{db_backup_file_extension} -1t").chomp.split("\n")
+          uncompressed_backup_files = capture("ls #{db_backups_path}/*.#{db_backup_file_extension} -1tr").chomp.split("\n")
 
           uncompressed_backup_files.each do |file|
             run "bzip2 -zvck9 #{file} > #{file}.bz2 && rm -f #{file}"

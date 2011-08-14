@@ -152,14 +152,36 @@ module ChickenSoup
   #   download_compressed 'my/remote/file', 'my/local/file', :once => true
   #
   def download_compressed(remote, local, options = {})
-    remote_compressed_filename = "#{remote}.bz2"
-    local_compressed_filename  = "#{local}.bz2"
+    unless compressed_file? remote
+      remote_compressed_filename = "#{remote}.bz2"
+      local_compressed_filename  = "#{local}.bz2"
 
-    run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"
+      run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"
+    end
+
+    remote_compressed_filename  ||= remote
+    local_compressed_filename   ||= local
+
     download remote_compressed_filename, local_compressed_filename, options
 
-    run "rm -f #{remote_compressed_filename}"
+    run "rm -f #{remote_compressed_filename}" unless remote_compressed_filename == remote
     `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
+  end
+
+  ###
+  # Checks to see if a filename has an extension which would imply that
+  # it is compressed.
+  #
+  # @param [String] filename The filename whose extension will be checked.
+  #
+  # @return [Boolean] the result of whether the file has a compression
+  # extension.
+  #
+  # @example
+  #   compressed_file? 'file.bz2'
+  #
+  def compressed_file?(filename)
+    filename =~ /.*\.bz2/
   end
 
   ###

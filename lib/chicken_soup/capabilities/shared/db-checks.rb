@@ -13,7 +13,11 @@ Capistrano::Configuration.instance(:must_exist).load do
         task :db do
           required_variables = [
             :skip_backup_before_migration,
-            :db_backups_path
+            :db_backups_path,
+            :db_backup_file_extension,
+            :autocompress_db_backups,
+            :limit_db_backups,
+            :total_db_backup_limit
           ]
 
           verify_variables(required_variables)

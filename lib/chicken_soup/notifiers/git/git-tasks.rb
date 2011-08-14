@@ -19,9 +19,9 @@ Capistrano::Configuration.instance(:must_exist).load do
         Tag push happens in the background so it won't slow down deployment.
       DESC
       task :tag do
-        tag_name = "deployment/#{rails_env}/#{current_release}"
+        tag_name = "deployment/#{rails_env}/#{latest_release_name}"
 
-        `git tag -a -m "Tagging deploy to #{rails_env} at #{current_release}" #{tag_name} #{branch}`
+        `git tag -a -m "Tagging deploy to #{rails_env} at #{latest_release_name}" #{tag_name} #{branch}`
         `git push #{remote} --tags > /dev/null 2>&1 &`
         `git push origin --tags > /dev/null 2>&1 &`
       end

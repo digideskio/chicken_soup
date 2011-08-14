@@ -2,6 +2,7 @@
 #                           TOOLS SETUP                              #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
+  require "chicken_soup/tools/defaults"
   require "chicken_soup/tools/tasks"
 
   ['defaults', 'checks', 'tasks'].each do |method|

@@ -37,7 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
           The compression format is bzip2.
         DESC
         task :default, :roles => :db, :only => {:primary => true} do
-          run "bzip2 -zvck9 #{latest_db_backup} > #{latest_db_backup}.bz2" unless compressed_file?(latest_db_backup)
+          run "bzip2 -zvck9 #{latest_db_backup} > #{latest_db_backup}.bz2 && rm -f #{latest_db_backup}" unless compressed_file?(latest_db_backup)
         end
 
         desc <<-DESC

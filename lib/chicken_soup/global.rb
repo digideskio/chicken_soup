@@ -115,7 +115,13 @@ module ChickenSoup
   #   remote_file_exists? '/var/www/myappdir/current'
   #
   def remote_file_exists?(file)
-    capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == "exists"
+    capture("if [[ -d #{file} ]] || [[ -h #{file} ]] || [[ -f #{file} ]]; then echo -n 'exists'; fi;") == 'exists'
+  end
+
+  def remote_directory_exists?(directory, options = {})
+    with_files_check = options[:with_files] ? "&& $(ls -A #{directory})" : ''
+
+    capture("if [[ -d #{directory} #{with_files_check} ]]; then echo -n 'exists'; fi") == 'exists'
   end
 
   ###
@@ -152,14 +158,38 @@ module ChickenSoup
   #   download_compressed 'my/remote/file', 'my/local/file', :once => true
   #
   def download_compressed(remote, local, options = {})
-    remote_compressed_filename = "#{remote}.bz2"
-    local_compressed_filename  = "#{local}.bz2"
+    remote_basename              = File.basename(remote)
 
-    run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"
+    unless compressed_file? remote
+      remote_compressed_filename = "#{user_home}/#{remote_basename}.bz2"
+      local_compressed_filename  = "#{local}.bz2"
+
+      run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"
+    end
+
+    remote_compressed_filename  ||= remote
+    local_compressed_filename   ||= local
+
     download remote_compressed_filename, local_compressed_filename, options
 
-    run "rm -f #{remote_compressed_filename}"
+    run "rm -f #{remote_compressed_filename}" unless remote_compressed_filename == remote
     `bunzip2 -f #{local_compressed_filename} && rm -f #{local_compressed_filename}`
+  end
+
+  ###
+  # Checks to see if a filename has an extension which would imply that
+  # it is compressed.
+  #
+  # @param [String] filename The filename whose extension will be checked.
+  #
+  # @return [Boolean] the result of whether the file has a compression
+  # extension.
+  #
+  # @example
+  #   compressed_file? 'file.bz2'
+  #
+  def compressed_file?(filename)
+    filename =~ /.*\.bz2/
   end
 
   ###
@@ -194,5 +224,61 @@ module ChickenSoup
   #
   def vc_log
     nil
+  end
+
+  ###
+  # Uses nslookup locally to figure out the IP address of the provided
+  # hostname.
+  #
+  # @param [String] hostname The hostname you would like to retrieve the
+  # IP for.
+  #
+  # @return [String] The IP address of the provided hostname.  If no
+  # IP can be retrieved, nil will be returned.
+  #
+  # @example
+  #   lookup_ip_for 'google.com'
+  #
+  def lookup_ip_for(hostname)
+    ip = `nslookup #{hostname} | tail -n 2 | head -n 1 | cut -d ' ' -f 2`.chomp
+    ip != '' ? ip : nil
+  end
+
+  def find_all_logs(log_directory, log_filenames)
+    existing_files = []
+
+    log_filenames.each do |standard_file|
+      existing_files << "#{log_directory}/#{application}.#{standard_file}" if remote_file_exists?("#{log_directory}/#{application}.#{standard_file}")
+      existing_files << "#{log_directory}/#{application}-#{standard_file}" if remote_file_exists?("#{log_directory}/#{application}-#{standard_file}")
+      existing_files << "#{log_directory}/#{standard_file}"                if remote_file_exists?("#{log_directory}/#{standard_file}")
+    end
+
+    existing_files
+  end
+
+  def log_directory(log_directories)
+    log_directories.detect do |directory|
+      remote_directory_exists? directory, :with_files => true
+    end
+  end
+
+  def fetch_log(logs)
+    logs.each do |log|
+      local_log_directory = "#{rails_root}/log/#{rails_env}/#{release_name}"
+
+      `mkdir -p #{local_log_directory}`
+      download log, "#{local_log_directory}/$CAPISTRANO:HOST$-#{File.basename(log)}"
+    end
+  end
+
+  def tail_log(logs)
+    run "tail -n #{ENV['lines'] || 20} -f #{logs.join ' '}" do |channel, stream, data|
+      trap("INT") { puts 'Log tailing aborted...'; exit 0; }
+
+      puts  # for an extra line break before the host name
+      puts "#{channel[:host]}: #{data}"
+
+      break if stream == :err
+    end
   end
 end

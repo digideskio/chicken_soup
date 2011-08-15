@@ -2,8 +2,6 @@
 #                          COMMON DB TASKS                           #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   _cset(:db_root_password)    {Capistrano::CLI.password_prompt("Root Password For DB: ")}
   _cset(:db_app_password)     {Capistrano::CLI.password_prompt("App Password For DB: ")}
 
@@ -11,20 +9,66 @@ Capistrano::Configuration.instance(:must_exist).load do
   run_task  "db:drop",         :as => manager_username
 
   before    "deploy:cleanup",  "deploy:migrate"
-  before    "deploy:migrate",  "db:backup"        unless skip_backup_before_migration
+  before    "deploy:migrate",  "db:backup"            unless skip_backup_before_migration
+
+  after     "db:backup",       "db:backup:compress"   if autocompress_db_backups
+  after     "db:backup",       "db:backup:cleanup"    if limit_db_backups
 
   namespace :db do
-    desc <<-DESC
-      Calls the rake task `db:backup` on the server for the given environment.
-
-      * The backup file is placed in a directory called `db_backups` under the `shared`
-        directory by default.
-      * The filenames are formatted with the timestamp of the backup.
-      * After export, each file is zipped up using a bzip2 compression format.
-    DESC
     namespace :backup do
+      desc <<-DESC
+        Calls the rake task `db:backup` on the server for the given environment.
+
+        * The backup file is placed in a directory called `db_backups` under the `shared`
+          directory by default.
+        * The filenames are formatted with the timestamp of the backup.
+        * After export, each file is zipped up using a bzip2 compression format.
+      DESC
       task :default, :roles => :db, :only => {:primary => true} do
-        run "cd #{current_path} && BACKUP_DIRECTORY=#{db_backups_path} #{rake} db:backup"
+        run %Q{cd #{current_path} && BACKUP_DIRECTORY="#{db_backups_path}" BACKUP_FILE="#{release_name}" BACKUP_FILE_EXTENSION="#{db_backup_file_extension}" #{rake} db:backup}
+      end
+
+      desc <<-DESC
+        If the user has decided they would like to limit the number of db backups
+        that can exist on the system, this task is called to clean up any files
+        which are over that limit.
+
+        The oldest files are cleaned up first.
+      DESC
+      task :cleanup, :roles => :db, :only => {:primary => true} do
+        number_of_backups = capture("ls #{db_backups_path} -1 | wc -l").chomp.to_i
+
+        if number_of_backups > total_db_backup_limit
+          backup_files_to_remove = capture("ls #{db_backups_path}/* -1t | tail -n #{number_of_backups - total_db_backup_limit}").chomp.split("\n")
+
+          backup_files_to_remove.each do |file|
+            run "rm -f #{file}"
+          end
+        end
+      end
+
+      namespace :compress do
+        desc <<-DESC
+          Compresses the most recent backup if it isn't already compressed.
+
+          The compression format is bzip2.
+        DESC
+        task :default, :roles => :db, :only => {:primary => true} do
+          run "bzip2 -zvck9 #{latest_db_backup} > #{latest_db_backup}.bz2 && rm -f #{latest_db_backup}" unless compressed_file?(latest_db_backup)
+        end
+
+        desc <<-DESC
+          Compresses any uncompressed DB backups to help save space.
+
+          The compression format is bzip2.
+        DESC
+        task :all, :roles => :db, :only => {:primary => true} do
+          uncompressed_backup_files = capture("ls #{db_backups_path}/*.#{db_backup_file_extension} -1tr").chomp.split("\n")
+
+          uncompressed_backup_files.each do |file|
+            run "bzip2 -zvck9 #{file} > #{file}.bz2 && rm -f #{file}"
+          end
+        end
       end
     end
 
@@ -49,12 +93,10 @@ Capistrano::Configuration.instance(:must_exist).load do
         Just like `db:pull` but doesn't create a new backup first.
       DESC
       task :latest, :roles => :db, :only => {:primary => true} do
-        latest_backup = capture(%Q{ls #{db_backups_path} -xtC | head -n 1 | cut -d " " -f 1}).chomp
-
-        download_compressed "#{db_backups_path}/#{latest_backup}", "#{rails_root}/tmp/#{latest_backup}", :once => true
+        download_compressed "#{latest_db_backup}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
 
         `rake db:drop:all db:create:all`
-        `rails dbconsole development < #{rails_root}/tmp/#{latest_backup}`
+        `rails dbconsole development < #{rails_root}/tmp/#{latest_db_backup_file}`
         `rake db:migrate db:test:prepare`
       end
     end

@@ -20,23 +20,25 @@
 require 'etc'
 
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
-  after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults'
+  after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults', 'tools:defaults'
 
   namespace :environment do
     namespace :defaults do
       desc "[internal] Used to set up the intelligent staging defaults we like for our projects"
       task :staging do
         set :rails_env,                 'staging'
+
+        _cset(:domain)                  { "staging.#{application}.com" }
       end
 
       desc "[internal] Used to set up the intelligent production defaults we like for our projects"
       task :production do
         set :rails_env,                 'production'
+
+        _cset(:domain)                  { "#{application}.com" }
       end
 
       desc "[internal] Sets intelligent common defaults for deployments"
@@ -52,9 +54,12 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :global_shared_elements,    ["config/database.yml"]
 
         _cset :notifiers,                 []
+        _cset :tools,                     [:log]
 
-        _cset(:application_short)         {application}
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
+
+        _cset(:latest_release_name)       {exists?(:deploy_timestamped) ? release_name : releases.last}
+        _cset(:previous_release_name)     {releases.length > 1 ? releases[-2] : nil}
       end
     end
   end

@@ -2,8 +2,6 @@
 #                             UNIX CHECKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   namespace :capabilities do
     namespace :variable do
       namespace :check do
@@ -24,9 +22,9 @@ Capistrano::Configuration.instance(:must_exist).load do
             :app_server_ip,
             :web_server_ip,
             :db_server_ip,
-            :web_servers,
-            :app_servers,
-            :db_servers
+            :web_server_name,
+            :app_server_name,
+            :db_server_name
           ]
 
           verify_variables(required_variables)

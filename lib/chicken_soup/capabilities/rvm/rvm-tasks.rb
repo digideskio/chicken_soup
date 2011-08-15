@@ -8,8 +8,6 @@ module ChickenSoup
 end
 
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   run_task 'ruby:update', :as => manager_username
 
   namespace :ruby do

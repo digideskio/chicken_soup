@@ -2,8 +2,6 @@
 #                         UNIX SERVER DEFAULTS                       #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   namespace :capabilities do
     namespace :defaults do
       desc "[internal] Sets intelligent defaults for unix server deployments."
@@ -19,15 +17,16 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :deploy_site_name,      domain
         set   :deploy_to,             "#{deploy_base_dir}/#{deploy_site_name}"
 
-        _cset :app_server_ip,         default_server_ip
-        _cset :web_server_ip,         default_server_ip
-        _cset :db_server_ip,          default_server_ip
-
         _cset :default_server_name,   domain
+        _cset(:default_server_ip)     { lookup_ip_for default_server_name }
 
-        _cset(:app_servers)           { default_server_name }
-        _cset(:web_servers)           { default_server_name }
-        _cset(:db_servers)            { default_server_name }
+        _cset(:app_server_name)       { default_server_name }
+        _cset(:web_server_name)       { default_server_name }
+        _cset(:db_server_name)        { default_server_name }
+
+        _cset(:app_server_ip)         { lookup_ip_for app_server_name }
+        _cset(:web_server_ip)         { lookup_ip_for web_server_name }
+        _cset(:db_server_ip)          { lookup_ip_for db_server_name  }
 
         # Evidently roles can't be assigned in a namespace :-/
         set_unix_server_roles
@@ -37,8 +36,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   desc "[internal] This task is only here because `role` cannot be used within a `namespace`"
   task :set_unix_server_roles do
-    role :web,                  web_servers
-    role :app,                  app_servers
-    role :db,                   db_servers, :primary => true
+    role :web,                  web_server_name
+    role :app,                  app_server_name
+    role :db,                   db_server_name, :primary => true
   end
 end

@@ -53,6 +53,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
         _cset :global_shared_elements,    ["config/database.yml"]
 
+        _cset :maintenance_page_path,     'public'
+
         _cset :notifiers,                 []
         _cset :tools,                     [:log]
 

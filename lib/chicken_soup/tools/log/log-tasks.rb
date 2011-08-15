@@ -4,21 +4,52 @@
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :log do
     desc <<-DESC
-      Calls the rake task `db:backup` on the server for the given environment.
+      Begins tailing the Rails log file within the specified environment.
 
-      * The backup file is placed in a directory called `db_backups` under the `shared`
-        directory by default.
-      * The filenames are formatted with the timestamp of the backup.
-      * After export, each file is zipped up using a bzip2 compression format.
+      * Pass lines=<number> to give you a bigger look back at what has
+        recently happened.  ie: cap staging log lines=50
     DESC
     task :default, :roles => :app do
-      run "tail -f #{shared_path}/log/#{rails_env}.log" do |channel, stream, data|
-        trap("INT") { puts 'Log tailing aborted...'; exit 0; }
+      log.all.tail
+    end
 
-        puts  # for an extra line break before the host name
-        puts "#{channel[:host]}: #{data}"
+    namespace :application do
+      task :fetch, :roles => :app do
+        fetch_logs(rails_log_files)
+      end
 
-        break if stream == :err
+      task :tail, :roles => :app do
+        tail_logs(rails_log_files)
+      end
+    end
+
+    namespace :app_server do
+      task :fetch, :roles => :app do
+        fetch_logs(app_server_log_files)
+      end
+
+      task :tail, :roles => :app do
+        tail_logs(app_server_log_files)
+      end
+    end
+
+    namespace :web_server do
+      task :fetch, :roles => :web do
+        fetch_logs(web_server_log_files)
+      end
+
+      task :tail, :roles => :web do
+        tail_logs(web_server_log_files)
+      end
+    end
+
+    namespace :all do
+      task :fetch, :roles => [:app, :web] do
+        fetch_logs(log_files)
+      end
+
+      task :tail, :roles => [:app, :web] do
+        tail_logs(log_files)
       end
     end
   end

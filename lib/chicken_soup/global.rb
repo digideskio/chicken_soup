@@ -259,4 +259,21 @@ module ChickenSoup
       remote_directory_exists? directory, :with_files => true
     end
   end
+
+  def fetch_log(*logs)
+    logs.each do |log|
+      download_compressed log, "#{rails_root}/log/#{rails_env}/#{release_name}/$CAPISTRANO:HOST$-#{File.basename(log)}"
+    end
+  end
+
+  def tail_log(*logs)
+    run "tail -n #{ENV['lines'] || 20} -f #{logs.join ' '}" do |channel, stream, data|
+      trap("INT") { puts 'Log tailing aborted...'; exit 0; }
+
+      puts  # for an extra line break before the host name
+      puts "#{channel[:host]}: #{data}"
+
+      break if stream == :err
+    end
+  end
 end

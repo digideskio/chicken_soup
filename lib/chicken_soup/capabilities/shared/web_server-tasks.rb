@@ -73,7 +73,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         require 'erb'
         deadline, reason = ENV['UNTIL'], ENV['REASON']
 
-        template = File.read(File.join(rails_root, maintenance_page_path, "#{maintenance_basename}.html.erb"))
+        template = File.read(maintenance_filename)
         maintenance_page = ERB.new(template).result(binding)
 
         put maintenance_page, "#{shared_path}/system/#{maintenance_basename}.html", :mode => 0644

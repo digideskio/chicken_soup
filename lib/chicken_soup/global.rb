@@ -158,8 +158,10 @@ module ChickenSoup
   #   download_compressed 'my/remote/file', 'my/local/file', :once => true
   #
   def download_compressed(remote, local, options = {})
+    remote_basename              = File.basename(remote)
+
     unless compressed_file? remote
-      remote_compressed_filename = "#{remote}.bz2"
+      remote_compressed_filename = "#{user_home}/#{remote_basename}.bz2"
       local_compressed_filename  = "#{local}.bz2"
 
       run "bzip2 -zvck9 #{remote} > #{remote_compressed_filename}"

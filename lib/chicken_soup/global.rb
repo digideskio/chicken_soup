@@ -241,4 +241,22 @@ module ChickenSoup
     ip = `nslookup #{hostname} | tail -n 2 | head -n 1 | cut -d ' ' -f 2`.chomp
     ip != '' ? ip : nil
   end
+
+  def find_all_logs(log_directory, log_filenames)
+    existing_files = []
+
+    log_filenames.each do |standard_file|
+      existing_files << "#{log_directory}/#{application}.#{standard_file}" if remote_file_exists?("#{log_directory}/#{application}.#{standard_file}")
+      existing_files << "#{log_directory}/#{application}-#{standard_file}" if remote_file_exists?("#{log_directory}/#{application}-#{standard_file}")
+      existing_files << "#{log_directory}/#{standard_file}"                if remote_file_exists?("#{log_directory}/#{standard_file}")
+    end
+
+    existing_files
+  end
+
+  def log_directory(log_directories)
+    log_directories.detect do |directory|
+      remote_directory_exists? directory, :with_files => true
+    end
+  end
 end

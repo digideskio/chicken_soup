@@ -20,12 +20,10 @@
 require 'etc'
 
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   after   'production',                 'environment:defaults:production', 'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
-  after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults'
+  after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults', 'tools:defaults'
 
   namespace :environment do
     namespace :defaults do
@@ -56,6 +54,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :global_shared_elements,    ["config/database.yml"]
 
         _cset :notifiers,                 []
+        _cset :tools,                     [:log]
 
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
 

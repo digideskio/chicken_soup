@@ -2,8 +2,6 @@
 #                           BUNDLER TASKS                            #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   before    'gems:install',       'bundler:install'
 
   run_task  'bundler:install',    :as => manager_username

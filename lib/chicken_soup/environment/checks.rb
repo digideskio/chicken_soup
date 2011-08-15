@@ -15,8 +15,6 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   on      :start,                         'environment:variable:check',  :except => ['staging', 'production']
   before  'deploy',                       'environment:deployment:check'
   before  'deploy:cold',                  'environment:deployment:check'

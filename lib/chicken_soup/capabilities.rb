@@ -14,8 +14,6 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   require 'chicken_soup/capabilities/defaults'
   require 'chicken_soup/capabilities/checks'
   require 'chicken_soup/capabilities/tasks'

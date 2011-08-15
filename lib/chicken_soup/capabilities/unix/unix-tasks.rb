@@ -2,8 +2,6 @@
 #                             UNIX TASKS                             #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  extend ChickenSoup
-
   before "deploy:shared_files:symlink",        "deploy:shared_files:setup"
 
   namespace :deploy do

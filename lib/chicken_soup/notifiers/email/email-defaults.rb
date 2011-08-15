@@ -6,8 +6,6 @@ require 'erb'
 require 'chicken_soup/notifiers/email/presenter'
 
 Capistrano::Configuration.instance(:must_exist).load do |cap|
-  extend ChickenSoup
-
   namespace :notifiers do
     namespace :defaults do
       task :email do

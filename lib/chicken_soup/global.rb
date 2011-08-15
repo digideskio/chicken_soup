@@ -262,13 +262,13 @@ module ChickenSoup
     end
   end
 
-  def fetch_log(*logs)
+  def fetch_log(logs)
     logs.each do |log|
       download_compressed log, "#{rails_root}/log/#{rails_env}/#{release_name}/$CAPISTRANO:HOST$-#{File.basename(log)}"
     end
   end
 
-  def tail_log(*logs)
+  def tail_log(logs)
     run "tail -n #{ENV['lines'] || 20} -f #{logs.join ' '}" do |channel, stream, data|
       trap("INT") { puts 'Log tailing aborted...'; exit 0; }
 

@@ -4,6 +4,9 @@
 module ChickenSoup
   module WebServer
     STANDARD_CONTROL_SCRIPTS = ['/etc/init.d/nginx']
+    STANDARD_LOG_LOCATIONS   = ['/var/log/nginx', '/var/log/nginx/current']
+    STANDARD_ERROR_LOGS      = ['error.log']
+    STANDARD_ACCESS_LOGS     = ['access.log']
   end
 end
 

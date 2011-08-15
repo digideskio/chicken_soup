@@ -1,6 +1,12 @@
 ######################################################################
 #                       PASSENGER DEFAULTS                           #
 ######################################################################
+module ChickenSoup
+  module ApplicationServer
+    STANDARD_LOGS = ['passenger_log', 'passenger.log', 'passenger']
+  end
+end
+
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :capabilities do
     namespace :defaults do

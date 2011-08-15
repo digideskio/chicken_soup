@@ -14,6 +14,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     namespace :defaults do
       desc "[internal] Checks to see what type of Nginx installation is running on the remote."
       task :nginx do
+        capabilities.defaults.web_server
       end
     end
   end

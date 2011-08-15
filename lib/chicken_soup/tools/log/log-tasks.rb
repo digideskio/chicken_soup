@@ -15,41 +15,41 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     namespace :application do
       task :fetch, :roles => :app do
-        fetch_logs(rails_log_files)
+        fetch_log(rails_log_files)
       end
 
       task :tail, :roles => :app do
-        tail_logs(rails_log_files)
+        tail_log(rails_log_files)
       end
     end
 
     namespace :app_server do
       task :fetch, :roles => :app do
-        fetch_logs(app_server_log_files)
+        fetch_log(app_server_log_files)
       end
 
       task :tail, :roles => :app do
-        tail_logs(app_server_log_files)
+        tail_log(app_server_log_files)
       end
     end
 
     namespace :web_server do
       task :fetch, :roles => :web do
-        fetch_logs(web_server_log_files)
+        fetch_log(web_server_log_files)
       end
 
       task :tail, :roles => :web do
-        tail_logs(web_server_log_files)
+        tail_log(web_server_log_files)
       end
     end
 
     namespace :all do
       task :fetch, :roles => [:app, :web] do
-        fetch_logs(log_files)
+        fetch_log(log_files)
       end
 
       task :tail, :roles => [:app, :web] do
-        tail_logs(log_files)
+        tail_log(log_files)
       end
     end
   end

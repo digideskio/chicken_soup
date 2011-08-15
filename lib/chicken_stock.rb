@@ -1,6 +1,6 @@
 require 'chicken_soup/global'
 
-extend   ChickenSoup
+include  ChickenSoup
 
 require 'chicken_soup/environment'
 require 'chicken_soup/capabilities'

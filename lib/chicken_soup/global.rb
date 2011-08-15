@@ -264,6 +264,9 @@ module ChickenSoup
 
   def fetch_log(logs)
     logs.each do |log|
+      local_log_directory = "#{rails_root}/log/#{rails_env}/#{release_name}"
+
+      `mkdir -p #{local_log_directory}`
       download log, "#{local_log_directory}/$CAPISTRANO:HOST$-#{File.basename(log)}"
     end
   end

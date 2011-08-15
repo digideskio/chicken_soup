@@ -121,7 +121,7 @@ module ChickenSoup
   def remote_directory_exists?(directory, options = {})
     with_files_check = options[:with_files] ? "&& $(ls -A #{directory})" : ''
 
-    capture("if [[ -d #{directory} #{with_files_check} ]]; then echo 'exists'; fi") == 'exists'
+    capture("if [[ -d #{directory} #{with_files_check} ]]; then echo -n 'exists'; fi") == 'exists'
   end
 
   ###

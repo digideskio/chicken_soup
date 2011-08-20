@@ -48,7 +48,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         web-accessible again.
       DESC
       task :disable, :roles => :web do
-        run "rm #{shared_path}/system/maintenance.html"
+        run "rm #{shared_path}/system/#{maintenance_basename}.html"
       end
 
       desc <<-DESC
@@ -68,15 +68,15 @@ Capistrano::Configuration.instance(:must_exist).load do
         Further customization will require that you write your own task.
       DESC
       task :enable, :roles => :web do
-        on_rollback { rm "#{shared_path}/system/maintenance.html" }
+        on_rollback { rm "#{shared_path}/system/#{maintenance_basename}.html" }
 
         require 'erb'
         deadline, reason = ENV['UNTIL'], ENV['REASON']
 
-        template = File.read("./public/maintenance.html.erb")
+        template = File.read(maintenance_filename)
         maintenance_page = ERB.new(template).result(binding)
 
-        put maintenance_page, "#{shared_path}/system/maintenance.html", :mode => 0644
+        put maintenance_page, "#{shared_path}/system/#{maintenance_basename}.html", :mode => 0644
       end
     end
   end

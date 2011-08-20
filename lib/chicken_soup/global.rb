@@ -281,4 +281,11 @@ module ChickenSoup
       break if stream == :err
     end
   end
+
+  def maintenance_filename
+    custom_maintenance_path   = File.join(rails_root, maintenance_page_path, "#{maintenance_basename}.html.erb")
+    template_maintenance_path = File.join(File.dirname(__FILE__), "templates", "maintenance.html.erb")
+
+    File.exist?(custom_maintenance_path) ? custom_maintenance_path : template_maintenance_path
+  end
 end

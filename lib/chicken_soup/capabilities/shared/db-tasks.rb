@@ -95,8 +95,11 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :latest, :roles => :db, :only => {:primary => true} do
         download_compressed "#{latest_db_backup}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
 
+        puts 'Running `rake db:drop:all db:create:all` locally'
         `rake db:drop:all db:create:all`
+        puts "Running `rails dbconsole development < #{latest_local_db_backup}` locally"
         `rails dbconsole development < #{rails_root}/tmp/#{latest_db_backup_file}`
+        puts "Running `rake db:migrate db:test:prepare` locally"
         `rake db:migrate db:test:prepare`
       end
     end

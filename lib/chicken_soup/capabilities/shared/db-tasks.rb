@@ -55,6 +55,11 @@ Capistrano::Configuration.instance(:must_exist).load do
         DESC
         task :default, :roles => :db, :only => {:primary => true} do
           run "bzip2 -zvck9 #{latest_db_backup} > #{latest_db_backup}.bz2 && rm -f #{latest_db_backup}" unless compressed_file?(latest_db_backup)
+
+          # After compressing, the latest_db_backup is no longer the latest DB
+          # backup so we need to reset it.
+          reset! :latest_db_backup_file
+          reset! :latest_db_backup
         end
 
         desc <<-DESC
@@ -95,10 +100,12 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :latest, :roles => :db, :only => {:primary => true} do
         download_compressed "#{latest_db_backup}", "#{rails_root}/tmp/#{latest_db_backup_file}", :once => true
 
+        latest_local_db_backup = `ls -1t #{rails_root}/tmp/*.#{db_backup_file_extension} | head -n 1`.chomp
+
         puts 'Running `rake db:drop:all db:create:all` locally'
         `rake db:drop:all db:create:all`
         puts "Running `rails dbconsole development < #{latest_local_db_backup}` locally"
-        `rails dbconsole development < #{rails_root}/tmp/#{latest_db_backup_file}`
+        `rails dbconsole development < #{latest_local_db_backup}`
         puts "Running `rake db:migrate db:test:prepare` locally"
         `rake db:migrate db:test:prepare`
       end

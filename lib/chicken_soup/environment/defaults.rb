@@ -44,6 +44,8 @@ Capistrano::Configuration.instance(:must_exist).load do
       desc "[internal] Sets intelligent common defaults for deployments"
       task :default do
         _cset :local_user,                Etc.getlogin
+        _cset :local_rake,                `if [[ -f #{rails_root}/Gemfile ]]; then echo "bundle exec rake"; else echo "rake"; fi`.chomp
+
         _cset :use_sudo,                  false
         _cset :default_shell,             false
 

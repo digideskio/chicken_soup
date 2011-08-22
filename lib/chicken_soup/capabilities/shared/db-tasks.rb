@@ -103,11 +103,11 @@ Capistrano::Configuration.instance(:must_exist).load do
         latest_local_db_backup = `ls -1t #{rails_root}/tmp/*.#{db_backup_file_extension} | head -n 1`.chomp
 
         puts 'Running `rake db:drop:all db:create:all` locally'
-        `rake db:drop:all db:create:all`
+        `#{local_rake} db:drop:all db:create:all`
         puts "Running `rails dbconsole development < #{latest_local_db_backup}` locally"
         `rails dbconsole development < #{latest_local_db_backup}`
         puts "Running `rake db:migrate db:test:prepare` locally"
-        `rake db:migrate db:test:prepare`
+        `#{local_rake} db:migrate db:test:prepare`
       end
     end
 

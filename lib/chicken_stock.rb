@@ -1,3 +1,4 @@
+require 'active_support'
 require 'chicken_soup/global'
 
 include  ChickenSoup

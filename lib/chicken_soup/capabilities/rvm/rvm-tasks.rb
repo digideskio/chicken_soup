@@ -21,8 +21,6 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :update do
       if ruby_version_update_pending
-        after   'ruby:update',    'gems:clean', 'gems:install'
-
         set     :ruby_version_update_pending,   false
 
         run("rvm use --create #{full_ruby_environment_string}")

@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.require_paths         = ["lib"]
   #= Manifest =#
 
-  s.add_dependency('capistrano',            '~> 2.6.0')
+  s.add_dependency('capistrano',            '~> 2.9.0')
   s.add_dependency('mail',                  '~> 2.2')
   s.add_dependency('activesupport',         '~> 3.0')
 

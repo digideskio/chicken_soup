@@ -6,13 +6,13 @@
 # None of these defaults are specific to any of the capabilities we
 # will add in later.
 #
-# The main tasks of note are the :staging and :production tasks.  Both
-# of which will set the :rails_env variable so that the rest of the
-# tasks know in what environment they are operating.
+# The main tasks of note are the :staging, :princess and :production
+# tasks.  Both of which will set the :rails_env variable so that the
+# rest of the tasks know in what environment they are operating.
 #
-# Note: That these are the 'environment:defaults:staging' and
-# 'environment:defaults:production' tasks and not the 'staging' and
-# 'production' tasks.
+# Note: That these are the 'environment:defaults:staging',
+# 'environment:defaults:princess' and 'environment:defaults:production'
+# tasks and not the 'staging', 'princess' and 'production' tasks.
 #
 # The latter should be set in the application's deploy.rb file.
 #
@@ -21,6 +21,7 @@ require 'etc'
 
 Capistrano::Configuration.instance(:must_exist).load do
   after   'production',                 'environment:defaults:production', 'environment:init'
+  after   'princess',                   'environment:defaults:princess',   'environment:init'
   after   'staging',                    'environment:defaults:staging',    'environment:init'
 
   after   'environment:defaults',       'capabilities:defaults', 'notifiers:defaults', 'tools:defaults'
@@ -32,6 +33,13 @@ Capistrano::Configuration.instance(:must_exist).load do
         set :rails_env,                 'staging'
 
         _cset(:domain)                  { "staging.#{application}.com" }
+      end
+
+      desc "[internal] Used to set up the intelligent princess defaults we like for our projects"
+      task :princess do
+        set :rails_env,                 'princess'
+
+        _cset(:domain)                  { "princess.#{application}.com" }
       end
 
       desc "[internal] Used to set up the intelligent production defaults we like for our projects"

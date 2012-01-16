@@ -15,7 +15,7 @@
 #
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
-  on      :start,                         'environment:variable:check',  :except => ['staging', 'production']
+  on      :start,                         'environment:variable:check',  :except => ['staging', 'princess', 'production']
   before  'deploy',                       'environment:deployment:check'
   before  'deploy:cold',                  'environment:deployment:check'
   before  'deploy:subzero',               'environment:deployment:check'
@@ -27,7 +27,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     namespace :variable do
       desc "[internal] Checks for environment variables shared among all deployment types."
       task :check do
-        abort "You need to specify staging or production when you deploy. ie 'cap staging db:backup'" unless exists?(:rails_env)
+        abort "You need to specify staging, princess or production when you deploy. ie 'cap staging db:backup'" unless exists?(:rails_env)
         abort "You need to specify a deployment type in your application's 'deploy.rb' file. ie 'set :deployment_type, :heroku'" unless exists?(:deployment_type)
 
         required_variables = [

@@ -92,6 +92,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :default, :roles => :db, :only => {:primary => true} do
         db.backup.default
         db.pull.latest
+        db.scrub
       end
 
       desc <<-DESC
@@ -142,6 +143,17 @@ Capistrano::Configuration.instance(:must_exist).load do
       abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
       db.backup
       run "cd #{current_path} && #{rake} db:seed"
+    end
+
+    desc <<-DESC
+      Calls the rake task `db:scrub` locally.
+
+      Usually, this will be run in conjunction with `db:pull` but may also be run
+      in a standalone manner.
+    DESC
+    task :scrub, :roles => :db do
+      puts 'Running `rake db:scrub` locally'
+      `#{local_rake} db:scrub`
     end
   end
 end

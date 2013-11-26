@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('capistrano',            '~> 2.9.0')
   s.add_dependency('mail',                  '~> 2.2')
-  s.add_dependency('activesupport',         '~> 3.0')
+  s.add_dependency('activesupport',         '~> 4.0')
 
   s.add_development_dependency('bundler',   '~> 1.0.10')
   s.add_development_dependency('rspec',     '~> 2.6.0')

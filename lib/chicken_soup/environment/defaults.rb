@@ -32,21 +32,21 @@ Capistrano::Configuration.instance(:must_exist).load do
       task :staging do
         set :rails_env,                 'staging'
 
-        _cset(:domain)                  { "staging.#{application}.com" }
+        _cset(:domain)                  { "staging.#{application}.#{application_tld}" }
       end
 
       desc "[internal] Used to set up the intelligent princess defaults we like for our projects"
       task :princess do
         set :rails_env,                 'princess'
 
-        _cset(:domain)                  { "princess.#{application}.com" }
+        _cset(:domain)                  { "princess.#{application}.#{application_tld}" }
       end
 
       desc "[internal] Used to set up the intelligent production defaults we like for our projects"
       task :production do
         set :rails_env,                 'production'
 
-        _cset(:domain)                  { "#{application}.com" }
+        _cset(:domain)                  { "#{application}.#{application_tld}" }
       end
 
       desc "[internal] Sets intelligent common defaults for deployments"
@@ -68,6 +68,7 @@ Capistrano::Configuration.instance(:must_exist).load do
         _cset :notifiers,                 []
         _cset :tools,                     [:log]
 
+        _cset(:application_tld)           {'com'}
         _cset(:application_underscored)   {application.gsub(/-/, "_")}
 
         _cset(:latest_release_name)       {exists?(:deploy_timestamped) ? release_name : releases.last}

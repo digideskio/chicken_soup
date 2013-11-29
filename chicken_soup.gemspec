@@ -32,7 +32,6 @@ Gem::Specification.new do |s|
   s.add_dependency('mail',                  '~> 2.2')
   s.add_dependency('activesupport',         '~> 4.0')
 
-  s.add_development_dependency('bundler',   '~> 1.0.10')
   s.add_development_dependency('rspec',     '~> 2.6.0')
   s.add_development_dependency('yard',      '~> 0.7.1')
 end

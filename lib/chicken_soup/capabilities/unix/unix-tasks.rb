@@ -4,7 +4,34 @@
 Capistrano::Configuration.instance(:must_exist).load do
   before "deploy:shared_files:symlink",        "deploy:shared_files:setup"
 
-  namespace :deploy do
+  namespace :unix do
+    namespace :deploy do
+      task :base do
+        deploy.update
+        unix.deploy.shared_files.symlink
+        gems.install
+        deploy.cleanup
+      end
+
+      task :subzero do
+        ruby.update
+        deploy.base
+      end
+
+      task :initial do
+        deploy.setup
+        db.create
+        website.install
+        deploy.cold
+        deploy.check
+      end
+
+      task :default do
+        deploy.base
+        deploy.restart
+      end
+    end
+
     namespace :shared_files do
       desc <<-DESC
         Creates the directory where the `symlink` task will look for its configuration files.

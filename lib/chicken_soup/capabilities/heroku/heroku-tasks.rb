@@ -3,8 +3,6 @@
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   heroku_tasks = [
-    "heroku:credentials",
-    "heroku:credentials:default",
     "deploy",
     "deploy:default",
     "deploy:initial",

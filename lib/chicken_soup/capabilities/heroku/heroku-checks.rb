@@ -11,9 +11,6 @@ Capistrano::Configuration.instance(:must_exist).load do
         task :heroku do
           required_variables = [
             :deploy_site_name,
-            :user,
-            :heroku_credentials_path,
-            :heroku_credentials_file
           ]
 
           verify_variables(required_variables)

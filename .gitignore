@@ -2,6 +2,5 @@
 tags
 .bundle
 .yardoc
-Gemfile.lock
 pkg/*
 todo.txt

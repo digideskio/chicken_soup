@@ -4,18 +4,6 @@
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :deploy do
     desc <<-DESC
-      [internal] The list of tasks used by `deploy`, `deploy:cold`, `deploy:subzero` and `deploy:initial`
-    DESC
-    task :base do
-      transaction do
-        deploy.update
-        deploy.shared_files.symlink
-        gems.install
-        deploy.cleanup
-      end
-    end
-
-    desc <<-DESC
       Used when you would like to be more forceful with your deployment.
 
       It will forceably disable the site (from the web server layer), run a standard
@@ -23,7 +11,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :cold do
       transaction do
-        deploy.base
+        send(deployment_type).deploy.base
       end
     end
 
@@ -36,8 +24,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :subzero do
       transaction do
-        ruby.update
-        deploy.base
+        send(deployment_type).deploy.subzero
       end
     end
 
@@ -50,11 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :initial do
       transaction do
-        deploy.setup
-        db.create
-        website.install
-        deploy.cold
-        deploy.check
+        send(deployment_type).deploy.initial
       end
     end
 
@@ -68,8 +51,7 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :default do
       transaction do
-        deploy.base
-        deploy.restart
+        send(deployment_type).deploy.default
       end
     end
   end

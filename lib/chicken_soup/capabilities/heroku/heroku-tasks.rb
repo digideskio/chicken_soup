@@ -3,8 +3,6 @@
 ######################################################################
 Capistrano::Configuration.instance(:must_exist).load do
   heroku_tasks = [
-    "heroku:credentials",
-    "heroku:credentials:default",
     "deploy",
     "deploy:default",
     "deploy:initial",
@@ -17,92 +15,209 @@ Capistrano::Configuration.instance(:must_exist).load do
     "website:install",
     "website:remove",
     "db:drop",
-    "db:backup",
+    "heroku.db:backup",
     "db:reset_and_seed",
     "db:seed",
     "shell",
     "invoke"
   ]
 
-  on :start, "heroku:credentials", :only => heroku_tasks
-  on :start, "heroku:raise_error", :except => heroku_tasks
+  _cset :skip_backup_before_migration,  false
+  _cset :db_backup_file_extension,      'dump'
+
+  before    "heroku:db:migrate",      "heroku:db:backup"          unless skip_backup_before_migration
+
+  # on :start, "heroku:raise_error", :except => heroku_tasks
 
   namespace :heroku do
-    namespace :domain do
-      desc <<-DESC
-        Installs a new domain for the application on the Heroku server.
-      DESC
-      task :install do
-        `heroku domains:add #{deploy_site_name}`
+    namespace :deploy do
+      task :base do
+        heroku.configuration.push
+        heroku.deploy.update
+        heroku.db.migrate
       end
 
       desc <<-DESC
-        Removes the domain for the application from the Heroku server.
+        The standard deployment task.
+
+        It will check out a new release of the code, run any pending migrations and
+        restart the application.
       DESC
-      task :remove do
-        `heroku domains:remove #{deploy_site_name}`
+      task :default do
+        heroku.deploy.base
+        heroku.deploy.restart
       end
 
-      namespace :addon do
-        desc <<-DESC
-          Add the Custom Domain Addon to the server.
-        DESC
-        task :install do
-          `heroku addons:add custom_domains:basic`
+      task :update do
+        `git push heroku-#{rails_env} #{branch}:master`
+      end
+
+      desc <<-DESC
+        Restarts the application.
+      DESC
+      task :restart do
+        `heroku restart --app #{deploy_site_name}`
+      end
+
+      desc <<-DESC
+        Rolls back to a previous version and restarts.
+      DESC
+      namespace :rollback do
+        task :default do
+          `heroku rollback --app #{deploy_site_name}`
+          deploy.restart
+        end
+      end
+
+      namespace :web do
+        desc "Removes the maintenance page to resume normal site operation."
+        task :enable do
+          `heroku maintenance:off --app #{deploy_site_name}`
         end
 
-        desc <<-DESC
-          Removes the Custom Domain Addon from the server.
-        DESC
-        task :remove do
-          `heroku addons:remove custom_domains:basic`
+        desc "Diplays the maintenance page."
+        task :disable do
+          `heroku maintenance:on --app #{deploy_site_name}`
         end
+      end
+
+      desc "Prepare the server for deployment."
+      task :initial do
+        heroku.deploy.default
       end
     end
 
-    namespace :credentials do
+    namespace :db do
       desc <<-DESC
-        Selects the correct Heroku credentials for use given the current user.
-
-        If a credentials file already exists, it is backed up.
+        Runs the migrate rake task.
       DESC
-      task :default do
-        if File.exist? heroku_credentials_file
-          heroku.credentials.backup
+      task :migrate do
+        `heroku run rake db:migrate --app #{deploy_site_name}`
+      end
+
+      desc "Removes the DB from the Server.  Also removes the user."
+      task :drop do
+        `heroku pg:reset --app #{deploy_site_name}`
+      end
+
+      namespace :pull do
+        desc <<-DESC
+          Creates an easy way to debug remote data locally.
+
+          * Running this task will create a dump file of all the data in the specified
+            environment.
+          * Copy the dump file to the local machine
+          * Drop and recreate all local databases
+          * Import the dump file
+          * Bring the local DB up-to-date with any local migrations
+          * Prepare the test environment
+        DESC
+        task :default do
+          heroku.db.backup.default
+          heroku.db.pull.latest
         end
 
-        if File.exist? "#{heroku_credentials_path}/#{user}_credentials"
-          heroku.credentials.switch
-        else
-          heroku.credentials.create
+        desc <<-DESC
+          Just like `db:pull` but doesn't create a new backup first.
+        DESC
+        task :latest do
+          %x{curl -o ./tmp/`date --iso-8601=seconds`.#{db_backup_file_extension} `heroku pgbackups:url --app #{deploy_site_name}`}
+
+          latest_local_db_backup = `ls -1t #{rails_root}/tmp/*.#{db_backup_file_extension} | head -n 1`.chomp
+
+          puts 'Running `rake db:drop:all db:create:all` locally'
+          `#{local_rake} db:drop:all db:create:all`
+          puts "Running DB restore locally with the DB backup file data"
+          `pg_restore --verbose --clean --no-acl --no-owner -h localhost -d #{application}_development #{latest_local_db_backup}`
+          puts "Running `rake db:migrate db:test:prepare` locally"
+          `#{local_rake} db:migrate db:test:prepare`
+
+          heroku.db.scrub
         end
       end
 
-      desc <<-DESC
-        [internal] Backs up the current credentials file.
-      DESC
-      task :backup do
-        account = File.readlines(heroku_credentials_file)[0].chomp
-        File.rename(heroku_credentials_file, "#{heroku_credentials_path}/#{account}_credentials")
+      namespace :backup do
+        desc "Backup the database"
+        task :default do
+          `heroku pgbackups:capture --app #{deploy_site_name} --expire`
+        end
+
+        # desc "List database backups"
+        # task :list do
+        #   `heroku pgbackups --app #{deploy_site_name}`
+        # end
+
+        # desc "List database backups"
+        # task :get do
+        #   `wget \`heroku pgbackups:url $1 --app #{deploy_site_name}\` ./tmp/db_backups `
+        # end
+
+        # desc "List database backups"
+        # task :remove do
+        #   `heroku pgbackups:destroy $1 --app #{deploy_site_name}`
+        # end
       end
 
       desc <<-DESC
-        [internal] Creates a Heroku credentials file.
+        Calls the rake task `db:reset_and_seed` on the server for the given environment.
+
+        Typically, this task will drop the DB, recreate the DB, load the development
+        schema and then populate the DB by calling the `db:seed` task.
+
+        Warning: This task cannot be called in production mode.  If you truely wish
+                to run this in production, you'll need to log into the server and
+                run the rake task manually or use Capistrano's `console` task.
       DESC
-      task :create do
-        `if [ ! -d #{heroku_credentials_path} ]; then mkdir -p #{heroku_credentials_path}; fi`
-        `echo #{user} > #{heroku_credentials_file}`
-        `echo #{password} >> #{heroku_credentials_file}`
+      desc "Reset database and seed fresh"
+      task :reset_and_seed do
+        abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+        heroku.db.backup
+        `heroku pg:reset --app #{deploy_site_name}`
+        heroku.db.seed
       end
 
       desc <<-DESC
-        [internal] Switches the credentials file to either the current use or the
-        name specified by the `HEROKU_ACCOUNT` environment variable.
+        Calls the rake task `db:seed` on the server for the given environment.
+
+        Typically, this task will populate the DB with valid data which is necessary
+        for the initial production deployment.  An example may be that the `STATES`
+        table gets populated with all the information about the States.
+
+        Warning: This task cannot be called in production mode.  If you truely wish
+                to run this in production, you'll need to log into the server and
+                run the rake task manually or use Capistrano's `console` task.
       DESC
-      task :switch do
-        account_to_switch_to = ENV['HEROKU_ACCOUNT'] || user
-        File.rename("#{heroku_credentials_path}/#{account_to_switch_to}_credentials", heroku_credentials_file)
+      task :seed do
+        abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
+        heroku.db.backup
+        `heroku run rake db:seed --app #{deploy_site_name}`
       end
+
+      desc <<-DESC
+        Calls the rake task `db:scrub` locally.
+
+        Usually, this will be run in conjunction with `db:pull` but may also be run
+        in a standalone manner.
+      DESC
+      task :scrub do
+        puts 'Running `rake db:scrub` locally'
+        `#{local_rake} db:scrub`
+      end
+    end
+
+    namespace :configuration do
+      task :push do
+        require 'figaro'
+
+        Figaro.instance_variable_set(:@path, "#{rails_root}/config/application.yml")
+
+        Figaro::Tasks::Heroku.new(deploy_site_name).invoke
+      end
+    end
+
+    desc "Invoke a single command on the Heroku server."
+    task :run do
+      `heroku run #{ENV['COMMAND']} --app #{deploy_site_name}`
     end
 
     desc <<-DESC
@@ -112,135 +227,5 @@ Capistrano::Configuration.instance(:must_exist).load do
     task :raise_error do
       abort "Deploying the #{rails_env} environment to Heroku.  This command is invalid."
     end
-  end
-
-  namespace :deploy do
-    desc <<-DESC
-      The standard deployment task.
-
-      It will check out a new release of the code, run any pending migrations and
-      restart the application.
-    DESC
-    task :default do
-      `git push heroku #{branch}`
-      deploy.migrate
-      deploy.restart
-    end
-
-    desc <<-DESC
-      Restarts the application.
-    DESC
-    task :restart do
-      `heroku restart`
-    end
-
-    desc <<-DESC
-      Runs the migrate rake task.
-    DESC
-    task :migrate do
-      `heroku rake db:migrate`
-    end
-
-    desc <<-DESC
-      Rolls back to a previous version and restarts.
-    DESC
-    namespace :rollback do
-      task :default do
-        `heroku rollback`
-        deploy.restart
-      end
-    end
-
-    namespace :web do
-      desc "Removes the maintenance page to resume normal site operation."
-      task :enable do
-        `heroku maintenance:off`
-      end
-
-      desc "Diplays the maintenance page."
-      task :disable do
-        `heroku maintenance:on`
-      end
-    end
-
-    desc "Prepare the server for deployment."
-    task :initial do
-      website.install
-
-      heroku.domain.addon.install
-      db.backup.addon.install
-
-      heroku.domain.install
-
-      `heroku config:add BUNDLE_WITHOUT="development:test"`
-      deploy.default
-    end
-  end
-
-  namespace :website do
-    desc "Installs the application on Heroku"
-    task :install do
-      `heroku create #{application}`
-    end
-
-    desc "Completely removes application from Heroku"
-    task :remove do
-      `heroku destroy --confirm #{application}`
-    end
-  end
-
-  namespace :db do
-    desc "Removes the DB from the Server.  Also removes the user."
-    task :drop do
-      `heroku pg:reset`
-    end
-
-    namespace :backup do
-      desc "Backup the database"
-      task :default do
-        `heroku pgbackups:capture`
-      end
-
-      namespace :addon do
-        desc <<-DESC
-          Add the Postgres Backups Addon to the server.
-        DESC
-        task :install do
-          `heroku addons:add pgbackups:basic`
-        end
-
-        desc <<-DESC
-          Removes the Postgres Backups Addon from the server.
-        DESC
-        task :remove do
-          `heroku addons:remove pgbackups:basic`
-        end
-      end
-    end
-
-    desc "Reset database and seed fresh"
-    task :reset_and_seed do
-      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
-      db.backup
-      `heroku pg:reset`
-      `heroku rake db:seed`
-    end
-
-    desc "Seed database"
-    task :seed do
-      abort "I'm sorry Dave, but I can't let you do that. I have full control over production." if rails_env == 'production'
-      db.backup
-      `heroku rake db:seed`
-    end
-  end
-
-  desc "Begin an interactive Heroku session."
-  task :shell do
-    `heroku shell`
-  end
-
-  desc "Invoke a single command on the Heroku server."
-  task :invoke do
-    `heroku invoke #{ENV['COMMAND']}`
   end
 end

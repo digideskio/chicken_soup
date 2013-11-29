@@ -4,7 +4,7 @@
 require 'mail'
 
 Capistrano::Configuration.instance(:must_exist).load do |cap|
-  after     'deploy:base',            'notify:via_email'
+  after     'deploy',            'notify:via_email'
 
   namespace :notify do
     desc <<-DESC

@@ -4,15 +4,6 @@
 Capistrano::Configuration.instance(:must_exist).load do
   namespace :deploy do
     desc <<-DESC
-      [internal] The list of tasks used by `deploy`, `deploy:cold`, `deploy:subzero` and `deploy:initial`
-    DESC
-    task :base do
-      transaction do
-        send(deployment_type).deploy.base
-      end
-    end
-
-    desc <<-DESC
       Used when you would like to be more forceful with your deployment.
 
       It will forceably disable the site (from the web server layer), run a standard
